@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  nextjs:
+    container_name: gifts-nextjs
+    build:
+      context: .
+      # Path to the Dockerfile inside .docker/next directory
+      dockerfile: .docker/next/Dockerfile
+    ports:
+      - 3002:3002
+    volumes:
+      - ./nextjs:/app
+      - /app/node_modules
+    command: npm run dev
