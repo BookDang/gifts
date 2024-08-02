@@ -4,6 +4,9 @@ FROM node:20.10.0-alpine
 # Create the app directory
 WORKDIR /app
 
+# Install vim
+RUN apk add vim
+
 # Add metadata to the image
 LABEL author="Book Dang"
 
@@ -23,4 +26,4 @@ RUN npm run build
 EXPOSE 3003
 
 # Start the app
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:dev"]

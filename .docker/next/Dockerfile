@@ -4,6 +4,9 @@ FROM node:20.10.0-alpine
 # Create the app directory
 WORKDIR /app
 
+# Install vim
+RUN apk add vim
+
 # Add metadata to the image
 LABEL author="Book Dang"
 
