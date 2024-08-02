@@ -1,15 +1,20 @@
+# Description: Dockerfile for the NestJS application.
 FROM node:20.10.0-alpine
 
+# Create the app directory
 WORKDIR /app
 
+# Add metadata to the image
+LABEL author="Book Dang"
+
 # Copy package.json and package-lock.json from the nest directory
-COPY ../../nest/package.json ./
+COPY ../../nestjs/package.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the files
-COPY ../../nest .
+COPY ../../nestjs .
 
 # Build the app
 RUN npm run build
@@ -18,4 +23,4 @@ RUN npm run build
 EXPOSE 3003
 
 # Start the app
-CMD ["npm", "start"]
+CMD ["npm", "start:dev"]

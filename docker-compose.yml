@@ -12,4 +12,16 @@ services:
     volumes:
       - ./nextjs:/app
       - /app/node_modules
-    command: npm run dev
+
+  # Add more services here
+  # Create new service for nestjs based on Dockerfile in .docker/nest directory
+  nestjs:
+    container_name: gifts-nestjs
+    build:
+      context: .
+      dockerfile: .docker/nest/Dockerfile
+    ports:
+      - 3003:3003
+    volumes:
+      - ./nestjs:/app
+      - /app/node_modules

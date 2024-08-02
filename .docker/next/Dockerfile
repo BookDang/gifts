@@ -1,6 +1,11 @@
+# Description: This file contains the Dockerfile for the NextJS application.
 FROM node:20.10.0-alpine
 
+# Create the app directory
 WORKDIR /app
+
+# Add metadata to the image
+LABEL author="Book Dang"
 
 # Copy package.json from the nextjs directory
 COPY ../../nextjs/package.json ./
