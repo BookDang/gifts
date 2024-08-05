@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/api',
+  // basePath: '/api',
 };
 
 export default nextConfig;
