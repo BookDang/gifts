@@ -12,9 +12,9 @@ services:
     volumes:
       - ./nextjs:/app
       - /app/node_modules
-    # networks:
-    #   - gifts-frontend
-    #   - gifts-backend
+    networks:
+      - gifts-frontend
+      - gifts-backend
 
   # Add more services here
   # Create new service for nestjs based on Dockerfile in .docker/nest directory
@@ -28,8 +28,8 @@ services:
     volumes:
       - ./nestjs:/app
       - /app/node_modules
-    # networks:
-    #   - gifts-backend
+    networks:
+      - gifts-backend
 
   # Add Nginx service
   nginx:
@@ -44,12 +44,12 @@ services:
     depends_on:
       - nextjs
       - nestjs
-    # networks:
-    #   - gifts-frontend
-    #   - gifts-backend
+    networks:
+      - gifts-frontend
+      - gifts-backend
 
-# networks:
-#   gifts-frontend:
-#     driver: bridge
-#   gifts-backend:
-#     driver: bridge
+networks:
+  gifts-frontend:
+    driver: bridge
+  gifts-backend:
+    driver: bridge
