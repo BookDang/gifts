@@ -57,20 +57,20 @@ services:
 
   # Add Nginx service
   nginx:
-  # #   container_name: gifts-nginx
-  # #   build:
-  # #     context: .
-  # #     dockerfile: .docker/nginx/Dockerfile
-  # #   volumes:
-  # #     - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-  # #   ports:
-  # #     - 3004:80
-  # #   depends_on:
-  # #     - nextjs
-  # #     - nestjs
-  # #   networks:
-  # #     - gifts-frontend
-  # #     - gifts-backend
+    container_name: gifts-nginx
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+    volumes:
+      - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 3004:80
+    depends_on:
+      - nextjs
+      - nestjs
+    networks:
+      - gifts-frontend
+      - gifts-backend
 
 # Add networks for frontend and backend services
 networks:
