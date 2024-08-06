@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  # Add MongoDB service
+  mongodb:
+    container_name: gifts-mongodb
+    build: 
+      context: .
+      dockerfile: .docker/mongodb/Dockerfile
+    ports:
+      - "27017:27017"
+    networks:
+      - gifts-backend
+    volumes:
+      - mongodb-data:/data/db
+      - ./.docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: giftsmongodb
+      MONGO_INITDB_DATABASE: giftsdb
+      # docker exec -it gifts-mongodb mongo -u root -p giftsmongodb --authenticationDatabase admin
+
+  nextjs:
+    container_name: gifts-nextjs
+    build:
+      context: .
+      # Path to the Dockerfile inside .docker/next directory
+      dockerfile: .docker/next/Dockerfile
+    ports:
+      - 3002:3002
+    volumes:
+      - ./nextjs:/app
+      - /app/node_modules
+    networks:
+      - gifts-frontend
+      - gifts-backend
+
+    depends_on:
+      - mongodb
+
+  # Add more services here
+  # Create new service for nestjs based on Dockerfile in .docker/nest directory
+  nestjs:
+    container_name: gifts-nestjs
+    build:
+      context: .
+      dockerfile: .docker/nest/Dockerfile
+    ports:
+      - 3003:3003
+    volumes:
+      - ./nestjs:/app
+      - /app/node_modules
+    networks:
+      - gifts-backend
+    depends_on:
+      - mongodb
+
+  # Add Nginx service
+  nginx:
+    container_name: gifts-nginx
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+    volumes:
+      - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+    depends_on:
+      - nextjs
+      - nestjs
+    networks:
+      - gifts-frontend
+      - gifts-backend
+
+# Add networks for frontend and backend services
+networks:
+  gifts-frontend:
+    driver: bridge
+  gifts-backend:
+    driver: bridge
+
+# Add volumes for MongoDB data
+volumes:
+  mongodb-data:
