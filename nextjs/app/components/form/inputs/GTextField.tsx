@@ -6,7 +6,7 @@ import { TextField, TextFieldProps } from '@mui/material'
 
 export type GTextFieldProps = {}
 
-const GTextField: React.FC<GTextFieldProps> = (props) => {
+const GTextField: React.FC<GTextFieldProps> = props => {
   return <TextField {...props} />
 }
 

@@ -1,0 +1,10 @@
+{
+  "LoginPage": {
+    "title": "Đăng nhập",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "rememberMe": "Ghi nhớ",
+    "forgotPassword": "Quên mật khẩu?",
+    "login": "Đăng nhập"
+  }
+}

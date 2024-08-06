@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import { AiFillAlert } from 'react-icons/ai'
-import { appWithTranslation } from 'next-i18next'
 
 const Home = () => {
   return (
@@ -11,4 +10,4 @@ const Home = () => {
   )
 }
 
-export default appWithTranslation(Home)
+export default Home
