@@ -7,7 +7,6 @@ type FormTitleProps = {
 }
 
 const FormTitle: React.FC<FormTitleProps> = props => {
-
   console.log('FormTitle render')
 
   return (
@@ -19,4 +18,4 @@ const FormTitle: React.FC<FormTitleProps> = props => {
   )
 }
 
-export default FormTitle
+export default React.memo(FormTitle)

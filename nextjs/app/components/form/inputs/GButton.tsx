@@ -11,7 +11,9 @@ import { Button, ButtonProps } from '@mui/material'
 export type GButtonProps = {} & ButtonProps
 
 const GButton: React.FC<GButtonProps> = props => {
+  console.log('GButton render')
+
   return <Button {...props} />
 }
 
-export default GButton
+export default React.memo(GButton)
