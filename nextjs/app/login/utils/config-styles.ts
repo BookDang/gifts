@@ -1,0 +1,41 @@
+/**
+ * Path import the constants in this file:
+ * import { styleTextField } from '@/app/login/utils/config-styles'
+ */
+
+import { COLORS } from '@/utils/constants/colors'
+
+export const styleTextField = {
+  '& .MuiOutlinedInput-root': {
+    '&:hover fieldset': {
+      borderColor: COLORS['login-light_yellow'],
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: COLORS['login-light_yellow'],
+    },
+    backgroundColor: 'white',
+  },
+  '& .MuiFormControl-root': {
+    '&:hover .MuiInputLabel-root': {
+      color: COLORS['amber-500'],
+    },
+  },
+  '& .MuiInputLabel-root': {
+    '&.Mui-focused': {
+      color: COLORS['amber-500'],
+    },
+  },
+  '&:hover .MuiInputLabel-root': {
+    color: COLORS['amber-500'],
+  },
+}
+
+export const styleButton = {
+  '&.MuiButton-contained': {
+    backgroundColor: COLORS['login-light_yellow'],
+    color: 'white',
+    '&:hover': {
+      backgroundColor: COLORS['amber-400'],
+    },
+  },
+}

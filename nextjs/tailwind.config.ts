@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         'login-light_blue': 'rgb(0,227,254)',
-        'login-light_green': 'rgb(253, 224, 71)',
+        'login-light_yellow': 'rgb(253, 224, 71)',
       },
       backgroundImage: {
         'login-bg-gradient':

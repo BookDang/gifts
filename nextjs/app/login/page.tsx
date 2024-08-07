@@ -1,21 +1,30 @@
-'use cleint'
+'use client'
 
 import React from 'react'
 import { useTranslations } from 'next-intl'
+import FormTitle from '@/app/login/components/FormTitle'
+import LoginForm from '@/app/login/components/LoginForm'
+
+const backgroundImageStyle = {
+  backgroundImage: "url('/favicon.png')",
+  backgroundSize: '315px 315px',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+}
 
 const LoginPage: React.FC = () => {
   const t = useTranslations('LoginPage')
 
   return (
     <div className="login-container bg-login-bg-gradient w-screen h-screen relative">
-      <div className="top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white absolute shadow-md rounded-xl w-full max-w-md">
+      <div
+        className="top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 absolute
+       bg-white shadow-md rounded-t-xl w-full max-w-md"
+        style={backgroundImageStyle}
+      >
         <div className="login-wrap w-full">
-          <div className="form-title rounded-t-xl bg-amber-500 py-5">
-            <h1 className="text-2xl font-bold text-center text-white">
-              {t('title')}
-            </h1>
-          </div>
-          <div className="login-form px-4 py-6"></div>
+          <FormTitle title={t('login')} />
+          <LoginForm />
         </div>
       </div>
     </div>
