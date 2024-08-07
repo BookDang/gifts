@@ -39,3 +39,10 @@ export const styleButton = {
     },
   },
 }
+
+export const backgroundImageStyle = {
+  backgroundImage: "url('/favicon.png')",
+  backgroundSize: '315px 315px',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+}

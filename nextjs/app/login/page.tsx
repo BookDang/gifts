@@ -4,13 +4,7 @@ import React from 'react'
 import { useTranslations } from 'next-intl'
 import FormTitle from '@/app/login/components/FormTitle'
 import LoginForm from '@/app/login/components/LoginForm'
-
-const backgroundImageStyle = {
-  backgroundImage: "url('/favicon.png')",
-  backgroundSize: '315px 315px',
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center',
-}
+import { backgroundImageStyle } from '@/app/login/utils/config-styles'
 
 const LoginPage: React.FC = () => {
   const t = useTranslations('LoginPage')
