@@ -1,14 +1,14 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { Locale, defaultLocale } from '@/types/config'
+import { TLocale, defaultLocale } from '@/types/config-locales'
 
 const COOKIE_NAME = 'NEXT_LOCALE'
 
-export async function getUserLocale(): Promise<Locale> {
-  return (cookies().get(COOKIE_NAME)?.value as Locale) || defaultLocale
+export async function getUserLocale(): Promise<TLocale> {
+  return (cookies().get(COOKIE_NAME)?.value as TLocale) || defaultLocale
 }
 
-export async function setUserLocale(locale: Locale) {
+export async function setUserLocale(locale: TLocale) {
   cookies().set(COOKIE_NAME, locale)
 }
