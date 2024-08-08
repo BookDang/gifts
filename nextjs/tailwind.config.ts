@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         'login-light_blue': 'rgb(0,227,254)',
         'login-light_yellow': 'rgb(253, 224, 71)',
+        'login-light_yellow_60': 'rgb(253, 224, 71, 0.6)',
       },
       backgroundImage: {
         'login-bg-gradient':

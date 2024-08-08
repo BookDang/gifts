@@ -7,12 +7,34 @@
 
 import React from 'react'
 
-import { TextField, TextFieldProps } from '@mui/material'
+import { TextField, TextFieldProps, TooltipProps } from '@mui/material'
+import GHint from '@/app/components/common/GHint'
 
-export type GTextFieldProps = {} & TextFieldProps
+export type GTextFieldProps = {
+  hintcontent?: TooltipProps['title']
+  hintIconColor?: string
+} & TextFieldProps
 
 const GTextField: React.FC<GTextFieldProps> = props => {
-  return <TextField {...props} />
+  return (
+    <div className="relative">
+      <TextField
+        {...props}
+        sx={{
+          '& .MuiInputBase-root': {
+            paddingRight: props.hintcontent ? '2rem' : '0',
+          },
+          ...props.sx,
+        }}
+      />
+      {
+        // If the hintcontent is provided, show the hint icon
+        props.hintcontent !== undefined && (
+          <GHint content={props.hintcontent} iconColor={props.hintIconColor} />
+        )
+      }
+    </div>
+  )
 }
 
 export default GTextField

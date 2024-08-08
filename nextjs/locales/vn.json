@@ -2,9 +2,24 @@
   "LoginPage": {
     "title": "Đăng nhập",
     "email": "Email",
+    "user_name": "Tên đăng nhập",
     "password": "Mật khẩu",
-    "rememberMe": "Ghi nhớ",
-    "forgotPassword": "Quên mật khẩu?",
+    "remember_me": "Ghi nhớ",
+    "forgot_password": "Quên mật khẩu?",
     "login": "Đăng nhập"
+  },
+  "ValidationMessages": {
+    "required": "{this_field} không được để trống",
+    "min": "{this_field} phải chứa ít nhất {min} ký tự",
+    "max": "{this_field} không được quá {max} ký tự",
+    "between": "{this_field} phải chứa từ {min} đến {max} ký tự",
+    "email": "Email không hợp lệ",
+    "password": {
+      "conditions": "{this_field} phải chứa ít nhất:",
+      "special": "- 1 ký tự đặc biệt",
+      "number": "- 1 số",
+      "uppercase": "- 1 ký tự viết hoa",
+      "lowercase": "- 1 ký tự viết thường"
+    }
   }
 }

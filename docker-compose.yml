@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # Add MongoDB service
   mongodb:
