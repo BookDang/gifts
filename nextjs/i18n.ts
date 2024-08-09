@@ -1,7 +1,7 @@
 // Using next-intl package to handle internationalization in Next.js
 
 import { getRequestConfig } from 'next-intl/server'
-import { getUserLocale } from '@/services/locale'
+import { getUserLocale } from '@/services/localeService'
 
 export default getRequestConfig(async () => {
   const locale = await getUserLocale()

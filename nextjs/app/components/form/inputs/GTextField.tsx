@@ -17,6 +17,8 @@ export type GTextFieldProps = {
 
 const GTextField = React.forwardRef(
   (props: GTextFieldProps, ref: React.Ref<HTMLInputElement>) => {
+    console.log('GTextField render')
+    
     return (
       <div className="relative">
         <TextField
