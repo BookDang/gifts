@@ -28,6 +28,10 @@ export const styleTextField = {
   '&:hover .MuiInputLabel-root': {
     color: COLORS['amber-500'],
   },
+  '& .MuiInputBase-root input': {
+    color: '#6f6f6f',
+    backgroundColor: 'white',
+  },
 }
 
 export const styleButton = {

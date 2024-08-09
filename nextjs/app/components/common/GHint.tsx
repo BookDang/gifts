@@ -11,15 +11,25 @@ type GHintProps = {
 }
 
 const GHint: React.FC<GHintProps> = props => {
-  console.log('GHint render')
+  console.log('GHint render: ', props.content)
+
+  const redColor = props.iconColor
+    ? 'text-[' + props.iconColor + ']'
+    : 'text-login-light_yellow_60'
 
   return (
     <div className="hint absolute right-2 top-2">
-      <Tooltip title={props.content} arrow placement={props.placement ? props.placement : 'top'}>
-        <HelpIcon className="cursor-pointer text-login-light_yellow_60 hover:text-login-light_yellow" />
+      <Tooltip
+        title={props.content}
+        arrow
+        placement={props.placement ? props.placement : 'top'}
+      >
+        <HelpIcon
+          className={`cursor-pointer ${redColor} hover:text-login-light_yellow`}
+        />
       </Tooltip>
     </div>
   )
 }
 
-export default GHint
+export default React.memo(GHint)

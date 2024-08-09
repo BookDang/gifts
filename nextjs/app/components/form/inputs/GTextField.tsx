@@ -12,29 +12,35 @@ import GHint from '@/app/components/common/GHint'
 
 export type GTextFieldProps = {
   hintcontent?: TooltipProps['title']
-  hintIconColor?: string
+  hinticoncolor?: string
 } & TextFieldProps
 
-const GTextField: React.FC<GTextFieldProps> = props => {
-  return (
-    <div className="relative">
-      <TextField
-        {...props}
-        sx={{
-          '& .MuiInputBase-root': {
-            paddingRight: props.hintcontent ? '2rem' : '0',
-          },
-          ...props.sx,
-        }}
-      />
-      {
-        // If the hintcontent is provided, show the hint icon
-        props.hintcontent !== undefined && (
-          <GHint content={props.hintcontent} iconColor={props.hintIconColor} />
-        )
-      }
-    </div>
-  )
-}
+const GTextField = React.forwardRef(
+  (props: GTextFieldProps, ref: React.Ref<HTMLInputElement>) => {
+    return (
+      <div className="relative">
+        <TextField
+          {...props}
+          inputRef={ref}
+          sx={{
+            '& .MuiInputBase-root': {
+              paddingRight: props.hintcontent ? '2rem' : '0',
+            },
+            ...props.sx,
+          }}
+        />
+        {
+          // If the hintcontent is provided, show the hint icon
+          props.hintcontent !== undefined && (
+            <GHint
+              content={props.hintcontent}
+              iconColor={props.hinticoncolor}
+            />
+          )
+        }
+      </div>
+    )
+  },
+)
 
 export default GTextField
