@@ -9,6 +9,7 @@ import { styleButton, styleTextField } from '@/app/login/utils/config-styles'
 import PasswordHint from '@/app/login/components/PasswordHint'
 import { COLORS } from '@/utils/constants/colors'
 import { CircularProgress } from '@mui/material'
+import AuthService from '@/services/authService'
 
 const minPasswordLength = 6
 const maxPasswordLength = 30
@@ -22,6 +23,8 @@ type LoginFormInputs = {
 
 const LoginForm: React.FC = () => {
   console.log('LoginForm render')
+
+  const authService = new AuthService()
 
   const d = useTranslations('LoginPage') // LoginPage is the namespace
   const t = useTranslations('ValidationMessages') // ValidationMessages is the namespace
@@ -75,7 +78,14 @@ const LoginForm: React.FC = () => {
   }, [t, d, minUserNameLength, maxUserNameLength])
 
   const onSubmit: SubmitHandler<LoginFormInputs> = data => {
-    console.log('data: ', data)
+    const loginData = { ...data }
+    authService.login(loginData)
+    .then((res) => {
+      console.log('res: ', res)
+    })
+    .catch((error) => {
+      console.log('error: ', error)
+    })
   }
 
   return (
