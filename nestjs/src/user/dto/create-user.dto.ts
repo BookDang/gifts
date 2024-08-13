@@ -4,7 +4,11 @@ import {
   IsString,
   MinLength,
   IsEnum,
+  Max,
+  MaxLength,
+  Matches,
 } from 'class-validator'
+import { UserRoles } from '@/utils/enums/user-role.enum'
 
 export class CreateUserDto {
   @IsEmail()
@@ -12,6 +16,11 @@ export class CreateUserDto {
 
   @IsString()
   @MinLength(6)
+  @IsNotEmpty()
+  @MaxLength(30)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,30}$/, {
+    message: `Password must contain at least 6 characters, including uppercase, lowercase letters, and numbers`,
+  })
   password: string
 
   @IsString()
@@ -24,6 +33,6 @@ export class CreateUserDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsEnum(['admin', 'member'])
-  roles: string
+  @IsEnum(UserRoles)
+  roles: UserRoles
 }
