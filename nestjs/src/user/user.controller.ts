@@ -22,7 +22,9 @@ export class UserController {
 
   @Get()
   findAll() {
-    return this.userService.findAll()
+    const res = this.userService.findAll()
+    console.log('findAll', res)
+    return res
   }
 
   @Get(':id')

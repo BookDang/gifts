@@ -3,12 +3,12 @@ import { HydratedDocument } from 'mongoose'
 import { IUser } from '@/utils/interfaces/user.interface'
 import { UserRoles } from '@/utils/enums/user-role.enum'
 
-@Schema()
+@Schema({ timestamps: true })
 export class User implements IUser {
   @Prop({ required: true, unique: true })
   email: string
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string
 
   @Prop({ required: true })
@@ -28,9 +28,6 @@ export class User implements IUser {
 
   @Prop({ default: null })
   deletedAt: Date
-
-  @Prop({ default: false })
-  deleted: boolean
 }
 
 export type UserDocument = HydratedDocument<User>
