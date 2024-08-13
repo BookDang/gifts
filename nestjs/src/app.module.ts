@@ -3,10 +3,10 @@ import * as dotenv from 'dotenv'
 import { MongooseModule } from '@nestjs/mongoose'
 import { TerminusModule } from '@nestjs/terminus'
 
-import { AppController } from '@/app.controller'
-import { AppService } from '@/app.service'
+import { AppController } from '@/src/app.controller'
+import { AppService } from '@/src/app.service'
 import { HealthModule } from './health/health.module'
-import { UserModule } from './user/user.module';
+import { UserModule } from './user/user.module'
 
 dotenv.config()
 
