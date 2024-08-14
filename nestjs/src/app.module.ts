@@ -5,8 +5,9 @@ import { TerminusModule } from '@nestjs/terminus'
 
 import { AppController } from '@/src/app.controller'
 import { AppService } from '@/src/app.service'
-import { HealthModule } from './health/health.module'
-import { UserModule } from './user/user.module'
+import { HealthModule } from '@/src/health/health.module'
+import { UsersModule } from '@/src/users/users.module'
+import { AuthModule } from '@/src/auth/auth.module'
 
 dotenv.config()
 
@@ -15,7 +16,9 @@ dotenv.config()
     MongooseModule.forRoot(process.env.MONGO_DATABASE_URL),
     TerminusModule,
     HealthModule,
-    UserModule,
+    UsersModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -7,20 +7,23 @@ import {
   MaxLength,
   Matches,
   IsDateString,
+  MIN,
 } from 'class-validator' // use class-validator to validate the data
 import { UserRoles } from '@/utils/enums/user-role.enum'
+import {
+  MAX_PASSWORD_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  PASSWORD_REGEX,
+} from '@/utils/constants/auth.constants'
 
 export class CreateUserDto {
   @IsEmail()
   email: string
 
-  @IsString()
-  @MinLength(6)
   @IsNotEmpty()
-  @MaxLength(30)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,30}$/, {
-    message: `Password must contain at least 6 characters, including uppercase, lowercase letters, and numbers`,
-  })
+  @MinLength(MIN_PASSWORD_LENGTH)
+  @MaxLength(MAX_PASSWORD_LENGTH)
+  @Matches(PASSWORD_REGEX)
   password: string
 
   @IsString()

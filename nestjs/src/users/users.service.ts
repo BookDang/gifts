@@ -7,13 +7,27 @@ import {
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import * as bcrypt from 'bcrypt'
-import { CreateUserDto } from '@/src/user/dto/create-user.dto'
-import { UpdateUserDto } from '@/src/user/dto/update-user.dto'
-import { User, UserDocument } from '@/src/user/schemas/user.schema'
+import { CreateUserDto } from '@/src/users/dto/create-user.dto'
+import { UpdateUserDto } from '@/src/users/dto/update-user.dto'
+import { User, UserDocument } from '@/src/users/schemas/user.schema'
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+
+  private omitPassword(user: User): Omit<User, 'password'> {
+    const { password, ...userWithoutPassword } = user
+    return userWithoutPassword
+  }
+
+  findOneByEmail(email: string): Promise<UserDocument> {
+    return this.userModel
+      .findOne({
+        email,
+      })
+      .select('+password')
+      .exec()
+  }
 
   async create(
     createUserDto: CreateUserDto,
@@ -35,11 +49,6 @@ export class UserService {
     } catch (error) {
       return error
     }
-  }
-
-  private omitPassword(user: User): Omit<User, 'password'> {
-    const { password, ...userWithoutPassword } = user
-    return userWithoutPassword
   }
 
   async findAll(): Promise<UserDocument[] | HttpException> {
