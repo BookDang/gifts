@@ -1,6 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
+import * as bcrypt from 'bcrypt'
 import { CreateUserDto } from '@/src/user/dto/create-user.dto'
 import { UpdateUserDto } from '@/src/user/dto/update-user.dto'
 import { User, UserDocument } from '@/src/user/schemas/user.schema'
@@ -9,45 +15,38 @@ import { User, UserDocument } from '@/src/user/schemas/user.schema'
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<Omit<User, 'password'> | HttpException> {
     try {
-      const user = await this.userModel.findOne({ email: createUserDto.email })
-      if (user) {
-        throw new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'This email is already registered',
-          },
-          HttpStatus.BAD_REQUEST,
-        )
+      const { email, password } = createUserDto
+      const existingUser = await this.userModel.findOne({ email })
+      if (existingUser) {
+        throw new ConflictException('User already exists')
       }
-      createUserDto.password = await this.hashPassword(createUserDto.password)
-      const createdUser = new this.userModel(createUserDto)
-      return await createdUser.save()
+      createUserDto.password = await bcrypt.hash(password, 10)
+      const createdUser = new this.userModel({
+        ...createUserDto,
+        password: createUserDto.password,
+        createdAt: new Date(),
+      })
+      const newUser = await createdUser.save()
+      return this.omitPassword(newUser.toObject())
     } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An error occurred while creating the user',
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      )
+      return error
     }
   }
 
-  hashPassword(password: string): string {
-    return password
+  private omitPassword(user: User): Omit<User, 'password'> {
+    const { password, ...userWithoutPassword } = user
+    return userWithoutPassword
   }
 
   async findAll(): Promise<UserDocument[] | HttpException> {
     try {
-      // throw new HttpException(
-      //   { status: 500, message: 'Internal Server Error' },
-      //   500,
-      // )
       return await this.userModel.find().exec()
     } catch (error) {
-      throw new HttpException(
+      return new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: 'An error occurred while updating the user',

@@ -6,7 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  Res,
 } from '@nestjs/common'
+import { Response } from 'express'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -16,15 +19,23 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto)
+  async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
+    try {
+      const newUser = await this.userService.create(createUserDto)
+      return res.status(HttpStatus.CREATED).json(newUser)
+    } catch (error) {
+      return error
+    }
   }
 
   @Get()
   findAll() {
-    const res = this.userService.findAll()
-    console.log('findAll', res)
-    return res
+    try {
+      const res = this.userService.findAll()
+      return res
+    } catch (error) {
+      return error
+    }
   }
 
   @Get(':id')

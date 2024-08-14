@@ -27,9 +27,11 @@ export class User implements IUser {
   updatedAt: Date
 
   @Prop({ default: null })
-  deletedAt: Date
+  deletedAt: Date | null
 }
 
 export type UserDocument = HydratedDocument<User>
 
 export const UserSchema = SchemaFactory.createForClass(User)
+
+UserSchema.index({ roles: 1, email: 1 })

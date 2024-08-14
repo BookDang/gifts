@@ -4,10 +4,10 @@ import {
   IsString,
   MinLength,
   IsEnum,
-  Max,
   MaxLength,
   Matches,
-} from 'class-validator'
+  IsDateString,
+} from 'class-validator' // use class-validator to validate the data
 import { UserRoles } from '@/utils/enums/user-role.enum'
 
 export class CreateUserDto {
@@ -27,7 +27,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string
 
-  @IsString()
+  @IsDateString()
   @IsNotEmpty()
   birthday: Date
 
@@ -36,3 +36,12 @@ export class CreateUserDto {
   @IsEnum(UserRoles)
   roles: UserRoles
 }
+
+// // give me mock data for testing
+// export const mockCreateUserDto = {
+//   email: 'test@gmail.com',
+//   password: 'Test123',
+//   name: 'Test',
+//   birthday: '1999-01-01 00:00:00',
+//   roles: 'member',
+// }
