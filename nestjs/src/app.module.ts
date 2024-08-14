@@ -8,6 +8,7 @@ import { AppService } from '@/src/app.service'
 import { HealthModule } from '@/src/health/health.module'
 import { UsersModule } from '@/src/users/users.module'
 import { AuthModule } from '@/src/auth/auth.module'
+import { CatsModule } from './cats/cats.module';
 
 dotenv.config()
 
@@ -19,6 +20,7 @@ dotenv.config()
     UsersModule,
     AuthModule,
     UsersModule,
+    CatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
