@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import * as dotenv from 'dotenv'
 import { MongooseModule } from '@nestjs/mongoose'
 import { TerminusModule } from '@nestjs/terminus'
+import { ConfigModule } from '@nestjs/config'
 
 import { AppController } from '@/src/app.controller'
 import { AppService } from '@/src/app.service'
@@ -18,7 +19,10 @@ dotenv.config()
     HealthModule,
     UsersModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes the module global
+    })
   ],
   controllers: [AppController],
   providers: [AppService],

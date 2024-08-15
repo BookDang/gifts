@@ -1,5 +1,14 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common'
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  Res,
+  HttpStatus,
+} from '@nestjs/common'
+import { Response } from 'express'
 import * as bcrypt from 'bcrypt'
+import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { AuthService } from '@/src/auth/auth.service'
 import { LoginDto } from '@/src/auth/dto/login.dto'
@@ -9,22 +18,32 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post()
-  async create(@Body() loginDto: LoginDto) {
+  @HttpCode(200)
+  async login(@Body() loginDto: LoginDto, @Res() res: Response) {
     try {
       const user = await this.authService.login(loginDto)
       if (user && (await bcrypt.compare(loginDto.password, user.password))) {
         const payload = { id: user._id, username: user.name }
-        return {
-          access_token: await this.jwtService.signAsync(payload),
-        }
+        const secret = this.configService.get<string>('JWT_SECRET')
+
+        const accessToken = await this.jwtService.signAsync(payload, { secret })
+        return res.status(HttpStatus.OK).json({ accessToken })
       } else {
-        throw new UnauthorizedException()
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Authentication credentials were not provided.',
+          error: 'Unauthorized',
+        })
       }
     } catch (error) {
-      return error
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Internal Server Error',
+      })
     }
   }
 }
