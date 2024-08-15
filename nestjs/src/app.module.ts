@@ -7,7 +7,8 @@ import { ConfigModule } from '@nestjs/config'
 import { AppController } from '@/src/app.controller'
 import { AppService } from '@/src/app.service'
 import { HealthModule } from '@/src/health/health.module'
-import { UsersModule } from './users/users.module'
+import { UsersModule } from '@/src/users/users.module'
+import { AuthModule } from '@/src/auth/auth.module'
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ dotenv.config()
       isGlobal: true, // Makes the module global
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

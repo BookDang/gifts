@@ -52,4 +52,12 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`
   }
+
+  async findOneByEmail(email: string): Promise<UserDocument | HttpException> {
+    try {
+      return await this.userModel.findOne({ email }).select('+password').exec()
+    } catch (error) {
+      return error
+    }
+  }
 }
