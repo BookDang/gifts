@@ -8,11 +8,13 @@ import {
   Delete,
   HttpStatus,
   Res,
+  HttpException,
 } from '@nestjs/common'
-import { Response } from 'express'
+import e, { Response } from 'express'
 import { UsersService } from '@/src/users/users.service'
 import { CreateUserDto } from '@/src/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/src/users/dto/update-user.dto'
+import { THttpException } from '@/utils/types/http-exception.type'
 
 @Controller('users')
 export class UsersController {
@@ -22,19 +24,27 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     try {
       const newUser = await this.usersService.create(createUserDto)
+      if (newUser instanceof HttpException) {
+        const error: THttpException = newUser.getResponse() as THttpException
+        return res.status(HttpStatus.CONFLICT).json(error)
+      }
       return res.status(HttpStatus.CREATED).json(newUser)
     } catch (error) {
-      return error
+      const errorResponse: THttpException =
+        error.getResponse() as THttpException
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
     }
   }
 
   @Get()
-  findAll() {
+  async findAll(@Res() res: Response) {
     try {
-      const res = this.usersService.findAll()
-      return res
+      const users = await this.usersService.findAll()
+      return res.status(HttpStatus.OK).json(users)
     } catch (error) {
-      return error
+      const errorResponse: THttpException =
+        error.getResponse() as THttpException
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(errorResponse)
     }
   }
 

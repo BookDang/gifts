@@ -7,9 +7,7 @@ import {
   IsEmail,
   IsNotEmpty,
   Matches,
-  MAX,
   MaxLength,
-  Min,
   MinLength,
 } from 'class-validator'
 

@@ -36,7 +36,7 @@ export class UsersService {
       const { email, password } = createUserDto
       const existingUser = await this.userModel.findOne({ email })
       if (existingUser) {
-        throw new ConflictException('User already exists')
+        return new ConflictException('User already exists')
       }
       createUserDto.password = await bcrypt.hash(password, 10)
       const createdUser = new this.userModel({
@@ -55,13 +55,7 @@ export class UsersService {
     try {
       return await this.userModel.find().exec()
     } catch (error) {
-      return new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'An error occurred while updating the user',
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      )
+      return error
     }
   }
 

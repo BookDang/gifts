@@ -8,6 +8,7 @@ import {
   Matches,
   IsDateString,
   MIN,
+  IsOptional,
 } from 'class-validator' // use class-validator to validate the data
 import { UserRoles } from '@/utils/enums/user-role.enum'
 import {
@@ -37,6 +38,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @IsEnum(UserRoles)
+  @IsOptional()
   roles: UserRoles
 }
 

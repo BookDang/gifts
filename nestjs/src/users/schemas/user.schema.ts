@@ -17,7 +17,7 @@ export class User implements IUser {
   @Prop({ required: true })
   birthday: Date
 
-  @Prop({ required: true, enum: UserRoles, default: 'member' })
+  @Prop({ required: false, enum: UserRoles, default: UserRoles.Admin })
   roles: string
 
   @Prop({ default: Date.now })
