@@ -1,12 +1,7 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common'
+import { ConflictException, HttpException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
-import * as bcrypt from 'bcrypt'
+
 import { CreateUserDto } from '@/src/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/src/users/dto/update-user.dto'
 import { User, UserDocument } from '@/src/users/schemas/user.schema'
@@ -20,30 +15,17 @@ export class UsersService {
     return userWithoutPassword
   }
 
-  findOneByEmail(email: string): Promise<UserDocument> {
-    return this.userModel
-      .findOne({
-        email,
-      })
-      .select('+password')
-      .exec()
-  }
-
   async create(
     createUserDto: CreateUserDto,
   ): Promise<Omit<User, 'password'> | HttpException> {
     try {
-      const { email, password } = createUserDto
+      // Check if the user already exists
+      const { email } = createUserDto
       const existingUser = await this.userModel.findOne({ email })
       if (existingUser) {
         return new ConflictException('User already exists')
       }
-      createUserDto.password = await bcrypt.hash(password, 10)
-      const createdUser = new this.userModel({
-        ...createUserDto,
-        password: createUserDto.password,
-        createdAt: new Date(),
-      })
+      const createdUser = new this.userModel(createUserDto)
       const newUser = await createdUser.save()
       return this.omitPassword(newUser.toObject())
     } catch (error) {
@@ -59,18 +41,15 @@ export class UsersService {
     }
   }
 
-  async findOne(id: string): Promise<UserDocument> {
-    return {} as UserDocument
+  findOne(id: number) {
+    return `This action returns a #${id} user`
   }
 
-  async update(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UserDocument> {
-    return {} as UserDocument
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return `This action updates a #${id} user`
   }
 
-  async remove(id: string): Promise<UserDocument> {
-    return {} as UserDocument
+  remove(id: number) {
+    return `This action removes a #${id} user`
   }
 }

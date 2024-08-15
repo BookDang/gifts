@@ -7,8 +7,7 @@ import { ConfigModule } from '@nestjs/config'
 import { AppController } from '@/src/app.controller'
 import { AppService } from '@/src/app.service'
 import { HealthModule } from '@/src/health/health.module'
-import { UsersModule } from '@/src/users/users.module'
-import { AuthModule } from '@/src/auth/auth.module'
+import { UsersModule } from './users/users.module'
 
 dotenv.config()
 
@@ -17,12 +16,10 @@ dotenv.config()
     MongooseModule.forRoot(process.env.MONGO_DATABASE_URL),
     TerminusModule,
     HealthModule,
-    UsersModule,
-    AuthModule,
-    UsersModule,
     ConfigModule.forRoot({
       isGlobal: true, // Makes the module global
-    })
+    }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
