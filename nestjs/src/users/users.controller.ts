@@ -9,12 +9,14 @@ import {
   HttpException,
   HttpStatus,
   Res,
+  // UseGuards,
 } from '@nestjs/common'
 import { Response } from 'express'
 import { UsersService } from '@/src/users/users.service'
 import { CreateUserDto } from '@/src/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/src/users/dto/update-user.dto'
 import { THttpException } from '@/utils/types/http-exception.type'
+// import { AuthGuard } from '@/src/auth/auth.guard'
 
 @Controller('users')
 export class UsersController {
@@ -37,6 +39,7 @@ export class UsersController {
   }
 
   @Get()
+  // @UseGuards(AuthGuard)
   async findAll(@Res() res: Response) {
     try {
       const users = await this.usersService.findAll()

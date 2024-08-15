@@ -1,37 +1,43 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { UsersService } from '../users/users.service'
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
+import { JwtService } from '@nestjs/jwt'
+import { UsersService } from '@/src/users/users.service'
+import { LoginDto } from '@/src/auth/dto/login.dto'
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
+    private usersService: UsersService,
+    private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ access_token: string } | HttpException> {
     try {
-      const user = await this.usersService.findOneByEmail(email)
-      // check if the user HttpException
+      const user = await this.usersService.findOneByEmail(loginDto.email)
+
       if (user instanceof HttpException) {
-        return null
+        throw new UnauthorizedException('Invalid credentials')
       }
 
-      if (user && (await bcrypt.compare(pass, user.password))) {
-        const { password, ...result } = user
-        return result
+      const isPasswordMatch = await bcrypt.compare(loginDto.password, user.password, )
+
+      if (!isPasswordMatch) {
+        throw new UnauthorizedException('Invalid credentials')
       }
-      return null
+
+      const payload = { email: user.email, sub: user.id }
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      }
     } catch (error) {
-      return null
-    }
-  }
-
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.userId }
-    return {
-      access_token: this.jwtService.sign(payload),
+      return error
     }
   }
 }

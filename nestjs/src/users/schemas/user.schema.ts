@@ -30,7 +30,6 @@ export class User implements IUser {
 
   @Prop({ default: null })
   deletedAt: Date | null
-
 }
 
 export type UserDocument = HydratedDocument<User>
@@ -40,14 +39,14 @@ const UserSchema = SchemaFactory.createForClass(User)
 // Hash the password before saving the user
 UserSchema.pre<UserDocument>('save', async function (next) {
   if (!this.isModified('password')) {
-    return next();
+    return next()
   }
   try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    return next();
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
+    return next()
   } catch (error) {
-    return next(error);
+    return next(error)
   }
 })
 

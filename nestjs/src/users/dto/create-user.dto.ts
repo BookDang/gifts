@@ -10,6 +10,7 @@ import {
   IsEmail,
 } from '@nestjs/class-validator'
 import {
+  EMAIL_REGEX,
   MAX_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH,
   PASSWORD_REGEX,
@@ -23,7 +24,7 @@ export class CreateUserDto {
 
   @IsEmail()
   @IsNotEmpty()
-  @Matches(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/, {
+  @Matches(EMAIL_REGEX, {
     message: 'Invalid email',
   })
   email: string
