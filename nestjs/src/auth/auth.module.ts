@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { AuthService } from '@/src/auth/auth.service'
 import { AuthController } from '@/src/auth/auth.controller'
 import { UsersModule } from '@/src/users/users.module'
+import { EXPIRESIN } from '@/utils/constants/auth.constants'
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { UsersModule } from '@/src/users/users.module'
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: 3600,
+          expiresIn: EXPIRESIN, // 3 minutes
         },
       }),
       inject: [ConfigService],

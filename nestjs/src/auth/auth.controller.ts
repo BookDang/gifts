@@ -13,13 +13,12 @@ import { AuthService } from '@/src/auth/auth.service'
 import { THttpException } from '@/utils/types/http-exception.type'
 import { LoginDto } from '@/src/auth/dto/login.dto'
 import { AuthGuard } from '@/src/auth/auth.guard'
-import { ConfigService } from '@nestjs/config'
+import { ACCESS_TOKEN, EXPIRESIN } from '@/utils/constants/auth.constants'
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly configService: ConfigService,
   ) {}
 
   @Post('login')
@@ -30,14 +29,12 @@ export class AuthController {
         const error: THttpException = token.getResponse() as THttpException
         return res.status(HttpStatus.UNAUTHORIZED).json(error)
       }
-      res.cookie('access_token', token, {
+      res.cookie(ACCESS_TOKEN, token.access_token, {
         httpOnly: true,
         secure: true,
-        maxAge: 1000 * 60 * 3,
+        maxAge: EXPIRESIN, // 3 minutes
         sameSite: 'strict',
       })
-      console.log('token', token)
-
       return res.status(HttpStatus.OK).json(token)
     } catch (error) {
       const errorResponse: THttpException =
