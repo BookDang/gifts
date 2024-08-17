@@ -29,8 +29,8 @@ export const styleTextField = {
     color: COLORS['amber-500'],
   },
   '& .MuiInputBase-root input': {
-    color: '#6f6f6f',
-    backgroundColor: 'white',
+    color: '#6f6f6f !important',
+    backgroundColor: 'white !important',
   },
 }
 

@@ -12,7 +12,7 @@ import GHint from '@/app/components/common/GHint'
 
 export type GTextFieldProps = {
   hintcontent?: TooltipProps['title']
-  hinticoncolor?: string
+  isError?: boolean
 } & TextFieldProps
 
 const GTextField = React.forwardRef(
@@ -36,7 +36,7 @@ const GTextField = React.forwardRef(
           props.hintcontent !== undefined && (
             <GHint
               content={props.hintcontent}
-              iconColor={props.hinticoncolor}
+              isError={props.isError}
             />
           )
         }

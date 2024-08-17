@@ -16,9 +16,6 @@ import {
 export class LoginDto {
   @IsEmail()
   @IsNotEmpty()
-  @Matches(EMAIL_REGEX, {
-    message: 'Invalid email',
-  })
   email: string
 
   @IsString()

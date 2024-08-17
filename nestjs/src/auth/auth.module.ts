@@ -13,7 +13,7 @@ import { EXPIRESIN } from '@/utils/constants/auth.constants'
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secretOrPrivateKey: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
           expiresIn: EXPIRESIN, // 3 minutes
         },

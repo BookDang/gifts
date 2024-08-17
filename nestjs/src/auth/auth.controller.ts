@@ -17,12 +17,11 @@ import { ACCESS_TOKEN, EXPIRESIN } from '@/utils/constants/auth.constants'
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
+    console.log('loginDto: ', loginDto)
     try {
       const token = await this.authService.login(loginDto)
       if (token instanceof HttpException) {

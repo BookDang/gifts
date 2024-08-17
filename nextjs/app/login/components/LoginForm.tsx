@@ -3,23 +3,20 @@
 import React, { use } from 'react'
 import { useTranslations } from 'next-intl'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
+import { AxiosError } from 'axios'
+
 import GButton from '@/app/components/form/inputs/GButton'
 import GTextField from '@/app/components/form/inputs/GTextField'
 import { styleButton, styleTextField } from '@/app/login/utils/config-styles'
 import PasswordHint from '@/app/login/components/PasswordHint'
-import { COLORS } from '@/utils/constants/colors'
 import { CircularProgress } from '@mui/material'
 import AuthService from '@/services/authService'
+import { TLogin } from '@/types/user'
 
 const minPasswordLength = 6
 const maxPasswordLength = 30
 const minUserNameLength = 8
 const maxUserNameLength = 30
-
-type LoginFormInputs = {
-  username: string
-  password: string
-}
 
 const LoginForm: React.FC = () => {
   console.log('LoginForm render')
@@ -33,9 +30,9 @@ const LoginForm: React.FC = () => {
     handleSubmit,
     control,
     formState: { errors, isSubmitSuccessful, isSubmitting },
-  } = useForm<LoginFormInputs>({
+  } = useForm<TLogin>({
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   })
@@ -58,34 +55,29 @@ const LoginForm: React.FC = () => {
     )
   }, [minPasswordLength, maxPasswordLength])
 
-  const userNameHint = React.useMemo(() => {
+  const emailHint = React.useMemo(() => {
     return (
       <div>
         <p>
           {t('required', {
-            this_field: d('user_name'),
+            this_field: d('email'),
           })}
         </p>
-        <p>
-          {t('between', {
-            this_field: d('user_name'),
-            min: minUserNameLength,
-            max: maxUserNameLength,
-          })}
-        </p>
+        <p>{d('example_mail')}</p>
       </div>
     )
   }, [t, d, minUserNameLength, maxUserNameLength])
 
-  const onSubmit: SubmitHandler<LoginFormInputs> = data => {
+  const onSubmit: SubmitHandler<TLogin> = data => {
     const loginData = { ...data }
-    authService.login(loginData)
-    .then((res) => {
-      console.log('res: ', res)
-    })
-    .catch((error) => {
-      console.log('error: ', error)
-    })
+    authService
+      .login(loginData)
+      .then(res => {
+        console.log('res: ', res)
+      })
+      .catch((error: AxiosError) => {
+        console.log('error: ', error.response)
+      })
   }
 
   return (
@@ -93,25 +85,30 @@ const LoginForm: React.FC = () => {
       <div className="login-form px-8 py-16 flex flex-col gap-y-8 bg-[rgb(255_255_255_/_90%)]">
         <div>
           <Controller
-            name="username"
+            name="email"
             control={control}
             rules={{
               required: true,
-              maxLength: maxUserNameLength,
-              minLength: minUserNameLength,
+              pattern: {
+                value: new RegExp(
+                  '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+                  'g',
+                ),
+                message: ``,
+              },
             }}
             render={({ field }) => (
               <GTextField
                 {...field}
                 fullWidth
                 size="small"
-                label={d('user_name')}
+                label={d('email')}
                 sx={{
                   ...styleTextField,
                 }}
-                error={!!errors.username}
-                hintcontent={userNameHint}
-                hinticoncolor={!!errors.username ? COLORS['red-error'] : ''}
+                error={!!errors.email}
+                hintcontent={emailHint}
+                isError={!!errors.email ? true : false}
               />
             )}
           />
@@ -139,7 +136,7 @@ const LoginForm: React.FC = () => {
                 }}
                 error={!!errors.password}
                 hintcontent={passwordHint}
-                hinticoncolor={!!errors.password ? COLORS['red-error'] : ''}
+                isError={!!errors.password ? true : false}
               />
             )}
           />

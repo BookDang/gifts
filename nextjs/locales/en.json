@@ -6,7 +6,8 @@
     "password": "Password",
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
-    "login": "Login"
+    "login": "Login",
+    "example_mail": "Ex: sample@mail.com"
   },
   "ValidationMessages": {
     "required": "{this_field} is required",

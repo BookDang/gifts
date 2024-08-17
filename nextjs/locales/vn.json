@@ -6,7 +6,8 @@
     "password": "Mật khẩu",
     "remember_me": "Ghi nhớ",
     "forgot_password": "Quên mật khẩu?",
-    "login": "Đăng nhập"
+    "login": "Đăng nhập",
+    "example_mail": "Vd: sample@mail.com"
   },
   "ValidationMessages": {
     "required": "{this_field} không được để trống",

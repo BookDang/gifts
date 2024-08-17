@@ -1,22 +1,27 @@
-import axios, { AxiosResponse } from "axios"
+import axios, { AxiosError, AxiosResponse } from 'axios'
+import { TLogin } from '@/types/user'
 
-type TLoginData = {
-  username: string
-  password: string
+export type TLoginResponse = {
+  access_token: string
 }
 
+export type TLoginError = {
+  statusCode: number
+  message: string
+}
 interface IAuthService {
-  login(loginData: TLoginData): Promise<any>
+  login(loginData: TLogin): Promise<any>
 }
 
 class AuthService implements IAuthService {
   // create a login method that returns a promise with axios type
-  async login(loginData: TLoginData): Promise<AxiosResponse> {
-    return axios.post('http://localhost/api/login', {
+  async login(
+    loginData: TLogin,
+  ): Promise<AxiosResponse<AxiosError | TLoginResponse>> {
+    return axios.post('http://localhost/api/auth/login', loginData, {
       headers: {
         'Content-Type': 'application/json',
       },
-      data: loginData,
     })
   }
 }

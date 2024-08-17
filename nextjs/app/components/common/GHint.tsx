@@ -6,15 +6,15 @@ import HelpIcon from '@mui/icons-material/Help'
 
 type GHintProps = {
   content: TooltipProps['title']
-  iconColor?: string
+  isError?: boolean
   placement?: TooltipProps['placement']
 }
 
 const GHint: React.FC<GHintProps> = props => {
   console.log('GHint render: ', props.content)
 
-  const redColor = props.iconColor
-    ? 'text-[' + props.iconColor + ']'
+  const redColor = props.isError
+    ? 'text-red-500'
     : 'text-login-light_yellow_60'
 
   return (
