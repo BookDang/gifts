@@ -20,7 +20,7 @@ export default async function RootLayout(props: any) {
 
   return (
     <html lang={locale}>
-      <body className={inter.className}>
+      <body className={`${inter.className} login-container bg-login-bg-gradient w-screen h-screen`}>
         <NextIntlClientProvider messages={messages}>
           <LayoutProvider>{props.children}</LayoutProvider>
         </NextIntlClientProvider>

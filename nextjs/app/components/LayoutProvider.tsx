@@ -8,12 +8,11 @@ type LayoutProviderProps = {
 }
 
 const LayoutProvider: React.FC<LayoutProviderProps> = (props) => {
-
   return (
-    <>
+    <main className="max-w-7xl mx-auto">
       {props.children}
       <GSnackbar />
-    </>
+    </main>
   )
 }
 
