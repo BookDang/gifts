@@ -1,9 +1,10 @@
 'use client'
 
-import React, { use } from 'react'
+import React from 'react'
 import { useTranslations } from 'next-intl'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { AxiosError } from 'axios'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 import GButton from '@/app/components/form/inputs/GButton'
 import GTextField from '@/app/components/form/inputs/GTextField'
@@ -12,7 +13,6 @@ import PasswordHint from '@/app/login/components/PasswordHint'
 import { CircularProgress } from '@mui/material'
 import AuthService from '@/services/authService'
 import { TLogin } from '@/types/user'
-import GSnackbar from '@/app/components/common/GSnackbar'
 import snackbarStore from '@/stores/SnackbarStore'
 
 const minPasswordLength = 6
@@ -22,6 +22,9 @@ const maxUserNameLength = 30
 
 const LoginForm: React.FC = () => {
   console.log('LoginForm render')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectUrl = searchParams.get('redirect')
 
   const authService = new AuthService()
   const { setMessage, setOpenSnackbar, setSeverity, setHorizontal } =
@@ -77,10 +80,9 @@ const LoginForm: React.FC = () => {
     authService
       .login(loginData)
       .then(res => {
-        console.log('res: ', res)
+        router.push(redirectUrl || '/users_1')
       })
       .catch((error: AxiosError) => {
-        console.log('error: ', (error.response?.data as any).message)
         setMessage((error.response?.data as any).message)
         setOpenSnackbar(true)
         setSeverity('error')
@@ -116,7 +118,7 @@ const LoginForm: React.FC = () => {
                 }}
                 error={!!errors.email}
                 hintcontent={emailHint}
-                isError={!!errors.email ? true : false}
+                iserror={!!errors.email ? '1' : '0'}
               />
             )}
           />
@@ -144,7 +146,7 @@ const LoginForm: React.FC = () => {
                 }}
                 error={!!errors.password}
                 hintcontent={passwordHint}
-                isError={!!errors.password ? true : false}
+                iserror={!!errors.password ? '1' : '0'}
               />
             )}
           />
