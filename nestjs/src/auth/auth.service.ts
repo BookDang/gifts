@@ -20,7 +20,7 @@ export class AuthService {
   ): Promise<{ access_token: string } | HttpException> {
     try {
       const user = await this.usersService.findOneByEmail(loginDto.email)
-      if (user instanceof HttpException) {
+      if (!user || user instanceof HttpException) {
         throw new UnauthorizedException('Invalid username or password.')
       }
       const isPasswordMatch = await bcrypt.compare(

@@ -12,6 +12,8 @@ import PasswordHint from '@/app/login/components/PasswordHint'
 import { CircularProgress } from '@mui/material'
 import AuthService from '@/services/authService'
 import { TLogin } from '@/types/user'
+import GSnackbar from '@/app/components/common/GSnackbar'
+import snackbarStore from '@/stores/SnackbarStore'
 
 const minPasswordLength = 6
 const maxPasswordLength = 30
@@ -22,6 +24,8 @@ const LoginForm: React.FC = () => {
   console.log('LoginForm render')
 
   const authService = new AuthService()
+  const { setMessage, setOpenSnackbar, setSeverity, setHorizontal } =
+    snackbarStore()
 
   const d = useTranslations('LoginPage') // LoginPage is the namespace
   const t = useTranslations('ValidationMessages') // ValidationMessages is the namespace
@@ -76,7 +80,11 @@ const LoginForm: React.FC = () => {
         console.log('res: ', res)
       })
       .catch((error: AxiosError) => {
-        console.log('error: ', error.response)
+        console.log('error: ', (error.response?.data as any).message)
+        setMessage((error.response?.data as any).message)
+        setOpenSnackbar(true)
+        setSeverity('error')
+        setHorizontal('right')
       })
   }
 
