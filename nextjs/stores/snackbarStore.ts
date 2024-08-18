@@ -17,7 +17,7 @@ type SnackbarStoreType = {
   setSeverity: (severity: 'error' | 'info' | 'success' | 'warning') => void
 }
 
-const snackbarStore = create<SnackbarStoreType>(set => ({
+const snackbarStore = create<SnackbarStoreType>()(set => ({
   message: '',
   setMessage: (message: string) => set({ message }),
   open: false,

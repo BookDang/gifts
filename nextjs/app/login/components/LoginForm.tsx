@@ -5,15 +5,18 @@ import { useTranslations } from 'next-intl'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { AxiosError } from 'axios'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
 
 import GButton from '@/app/components/form/inputs/GButton'
 import GTextField from '@/app/components/form/inputs/GTextField'
 import { styleButton, styleTextField } from '@/app/login/utils/config-styles'
 import PasswordHint from '@/app/login/components/PasswordHint'
 import { CircularProgress } from '@mui/material'
-import AuthService from '@/services/authService'
+import AuthService, { TLoginResponse } from '@/services/authService'
 import { TLogin } from '@/types/user'
-import snackbarStore from '@/stores/SnackbarStore'
+import snackbarStore from '@/stores/snackbarStore'
+import { IS_AUTHENTICATED } from '@/utils/constants/auth'
+import useAuthStore from '@/stores/authStore'
 
 const minPasswordLength = 6
 const maxPasswordLength = 30
@@ -25,6 +28,7 @@ const LoginForm: React.FC = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectUrl = searchParams.get('redirect')
+  const { setIsAuthenticated } = useAuthStore()
 
   const authService = new AuthService()
   const { setMessage, setOpenSnackbar, setSeverity, setHorizontal } =
@@ -80,10 +84,19 @@ const LoginForm: React.FC = () => {
     authService
       .login(loginData)
       .then(res => {
-        router.push(redirectUrl || '/users_1')
+        router.push(redirectUrl || '/')
+        Cookies.set(IS_AUTHENTICATED, 'IsAuthenticated', {
+          expires: 3 / 1440, // 3 minutes
+          domain: 'localhost',
+        })
+        setIsAuthenticated(true)
       })
       .catch((error: AxiosError) => {
-        setMessage((error.response?.data as any).message)
+        if (error.isAxiosError) {
+          setMessage((error.response?.data as any)?.message)
+        } else {
+          setMessage('Something went wrong')
+        }
         setOpenSnackbar(true)
         setSeverity('error')
         setHorizontal('right')

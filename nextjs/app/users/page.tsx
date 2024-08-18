@@ -1,7 +1,11 @@
 'use client'
 
 const UserPage = () => {
-  return <div>User Page</div>
+  return (
+    <div>
+      <h1>User Page</h1>
+    </div>
+  )
 }
 
 export default UserPage

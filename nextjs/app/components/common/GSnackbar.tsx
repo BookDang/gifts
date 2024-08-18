@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { Alert, Snackbar, SnackbarProps } from '@mui/material'
-import snackbarStore from '@/stores/SnackbarStore'
+import { Alert, Snackbar } from '@mui/material'
+import snackbarStore from '@/stores/snackbarStore'
 
 type GSnackbarProps = {}
 
@@ -18,8 +18,6 @@ const GSnackbar: React.FC<GSnackbarProps> = props => {
     severity,
     setSeverity,
   } = snackbarStore()
-
-  console.log('horizontal book: ', horizontal)
 
   const handleClose = () => {
     setOpenSnackbar(false)

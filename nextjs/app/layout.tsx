@@ -3,9 +3,9 @@ import { Inter } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import './globals.css'
-import LayoutProvider from '@/app/components/LayoutProvider'
-import Header from '@/app/components/Header'
-import Footer from '@/app/components/Footer'
+import LayoutProvider from '@/app/components/layouts/LayoutProvider'
+import Header from '@/app/components/layouts/Header'
+import Footer from '@/app/components/layouts/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
