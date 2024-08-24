@@ -7,6 +7,8 @@ export class HealthController {
 
   @Get()
   check() {
+    console.log(' process.env.JWT_SECRET', process.env.JWT_SECRET)
+
     return this.healthService.check()
   }
 }

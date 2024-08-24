@@ -1,0 +1,26 @@
+{
+  "LoginPage": {
+    "title": "Login",
+    "email": "Email",
+    "user_name": "User name",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "login": "Login",
+    "example_mail": "Ex: sample@mail.com"
+  },
+  "ValidationMessages": {
+    "required": "{this_field} is required",
+    "min": "{this_field} must contain at least {min} characters",
+    "max": "{this_field} must not exceed {max} characters",
+    "between": "{this_field} must contain from {min} to {max} characters",
+    "email": "Invalid email",
+    "password": {
+      "conditions": "{this_field} must contain at least:",
+      "special": "- 1 special character",
+      "number": "- 1 number",
+      "uppercase": "- 1 uppercase character",
+      "lowercase": "- 1 lowercase character"
+    }
+  }
+}
