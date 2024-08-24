@@ -38,24 +38,36 @@ const Header = () => {
       <nav>
         <ul className="flex space-x-4">
           <li>
-            <Link href="/" className="hover:text-login-light_yellow">
+            <Link
+              href="/"
+              className={`${pathname === '/' ? 'text-login-light_yellow cursor-default' : ''} hover:text-login-light_yellow`}
+            >
               Home
             </Link>
           </li>
           <li>
-            <Link href="/users" className="hover:text-login-light_yellow">
+            <Link
+              href="/users"
+              className={`${pathname === '/user' ? 'text-login-light_yellow cursor-default' : ''} hover:text-login-light_yellow`}
+            >
               Users
             </Link>
           </li>
           {isAuthenticated ? (
             <li>
-              <Link href="/logout" className="hover:text-login-light_yellow">
+              <Link
+                href="/logout"
+                className={`${pathname === ''} hover:text-login-light_yellow`}
+              >
                 Logout
               </Link>
             </li>
           ) : (
             <li>
-              <Link href="/login" className="hover:text-login-light_yellow">
+              <Link
+                href="/login"
+                className={`${pathname === '/login' ? 'text-login-light_yellow cursor-default' : ''} hover:text-login-light_yellow`}
+              >
                 Login
               </Link>
             </li>

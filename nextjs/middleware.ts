@@ -1,7 +1,11 @@
-import { authMiddleware } from '@/utils/middlewares/authMiddleware'
 import { NextRequest, NextResponse } from 'next/server'
+import { authMiddleware, loginMiddleware } from '@/utils/middlewares/authMiddleware'
 
 export async function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname === '/login') {
+    return loginMiddleware(req)
+  }
+
   if (req.nextUrl.pathname.startsWith('/users')) {
     return authMiddleware(req)
   }
@@ -10,5 +14,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/users'], // Apply middleware to these paths
+  matcher: ['/users', '/login'],
 }
