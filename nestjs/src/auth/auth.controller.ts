@@ -7,6 +7,7 @@ import {
   Res,
   Get,
   UseGuards,
+  Delete,
 } from '@nestjs/common'
 import { Response } from 'express'
 import { AuthService } from '@/src/auth/auth.service'
@@ -42,11 +43,12 @@ export class AuthController {
     }
   }
 
-  @Get('login')
-  @UseGuards(AuthGuard)
+  @Delete('logout')
+  // @UseGuards(AuthGuard)
   async findAll(@Res() res: Response) {
     try {
-      return res.status(HttpStatus.OK).json('Hello from auth')
+      res.clearCookie(ACCESS_TOKEN)
+      return res.status(HttpStatus.OK).json({ message: 'Logout successful' })
     } catch (error) {
       const errorResponse: THttpException =
         error.getResponse() as THttpException
