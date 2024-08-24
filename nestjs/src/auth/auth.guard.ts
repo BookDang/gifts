@@ -13,14 +13,17 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>()
-    // We're extracting the token from the cookie 
+    // We're extracting the token from the cookie
     const tokenCookie = request.cookies[ACCESS_TOKEN]
-    console.log('tokenCookie', tokenCookie)
-    // We're extracting the token from the header
-    const token = this.extractTokenFromHeader(request)
-    if (!token) {
+    if (!tokenCookie) {
       return false
     }
+    console.log('tokenCookie', tokenCookie)
+    // // We're extracting the token from the header
+    // const token = this.extractTokenFromHeader(request)
+    // if (!token) {
+    //   return false
+    // }
     try {
       const payload = await this.jwtService.verifyAsync(tokenCookie, {
         secret: this.configService.get<string>('JWT_SECRET'),

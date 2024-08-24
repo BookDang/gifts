@@ -4,7 +4,9 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Cookies from 'js-cookie'
-import { IS_AUTHENTICATED } from '@/utils/constants/auth'
+import { ACCESS_TOKEN, IS_AUTHENTICATED } from '@/utils/constants/auth'
+import AuthService from '@/services/authService'
+import snackbarStore from '@/stores/snackbarStore'
 
 const protectedRoutes = ['/users']
 
@@ -14,6 +16,9 @@ const Header = () => {
   const router = useRouter()
   const pathname = usePathname()
   const redirectStr = searchParams.get('redirect')
+  const authService = new AuthService()
+  const { setMessage, setOpenSnackbar, setSeverity, setHorizontal } =
+    snackbarStore()
 
   React.useEffect(() => {
     const isAuthenticatedCookie = Cookies.get(IS_AUTHENTICATED)
@@ -31,6 +36,28 @@ const Header = () => {
       }
     }
   }, [pathname, redirectStr])
+
+  const handleLogout = () => {
+    authService
+      .logout()
+      .then(() => {
+        Cookies.remove(IS_AUTHENTICATED)
+        Cookies.remove(ACCESS_TOKEN)
+        router.push('/login')
+      })
+      .catch(error => {
+        console.log('error logout', error)
+
+        if (error.isAxiosError) {
+          setMessage((error.response?.data as any)?.message)
+        } else {
+          setMessage('Something went wrong')
+        }
+        setOpenSnackbar(true)
+        setSeverity('error')
+        setHorizontal('right')
+      })
+  }
 
   return (
     <header className="flex items-center justify-between p-4 bg-gray-800/10 text-white w-full sticky top-0 left-0 z-50">
@@ -55,12 +82,12 @@ const Header = () => {
           </li>
           {isAuthenticated ? (
             <li>
-              <Link
-                href="/logout"
-                className={`${pathname === ''} hover:text-login-light_yellow`}
+              <span
+                className={`hover:text-login-light_yellow cursor-pointer`}
+                onClick={handleLogout}
               >
                 Logout
-              </Link>
+              </span>
             </li>
           ) : (
             <li>

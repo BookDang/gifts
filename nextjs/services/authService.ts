@@ -24,6 +24,11 @@ class AuthService implements IAuthService {
       },
     })
   }
+
+  // create a logout method that returns a promise with axios type
+  async logout(): Promise<AxiosResponse<AxiosError | { message: string }>> {
+    return axios.delete('http://localhost/api/auth/logout')
+  }
 }
 
 export default AuthService
