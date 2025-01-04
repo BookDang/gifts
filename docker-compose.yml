@@ -80,10 +80,8 @@ services:
     ports:
       - 89:80
     depends_on:
-      nextjs:
-        condition: service_healthy
-      nestjs:
-        condition: service_healthy
+      - nextjs
+      - nestjs
     networks:
       - gifts-frontend
       - gifts-backend
