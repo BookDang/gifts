@@ -47,12 +47,6 @@ services:
     networks:
       - gifts-frontend
       - gifts-backend
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3007/health"]
-      interval: 3h       # Thời gian giữa hai lần kiểm tra là 1 giờ
-      timeout: 10s       # Thời gian chờ cho mỗi lần kiểm tra
-      retries: 1         # Chỉ thử kiểm tra 1 lần
-      start_period: 0s
 
     # depends_on:
     #   - mongodb
@@ -71,12 +65,6 @@ services:
       - /app/node_modules
     networks:
       - gifts-backend
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3008/api"]
-      interval: 3h       # Thời gian giữa hai lần kiểm tra là 1 giờ
-      timeout: 10s       # Thời gian chờ cho mỗi lần kiểm tra
-      retries: 1         # Chỉ thử kiểm tra 1 lần
-      start_period: 0s
     # depends_on:
     #   - mongodb
     #   - mysql
