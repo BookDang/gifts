@@ -11,6 +11,6 @@ RUN npm install
 
 COPY ./nextjs /app
 
-EXPOSE 3000
+EXPOSE 3007
 
 CMD ["npm", "run", "dev"]
