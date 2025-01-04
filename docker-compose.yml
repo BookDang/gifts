@@ -1,0 +1,99 @@
+services:
+  # # Add MongoDB service
+  # mongodb:
+  #   container_name: gifts-v1_mongodb
+  #   build: 
+  #     context: .
+  #     dockerfile: .docker/mongodb/Dockerfile
+  #   ports:
+  #     - "27017:27017"
+  #   networks:
+  #     - gifts-backend
+  #   volumes:
+  #     - mongodb-data:/data/db
+  #     - ./.docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: giftsmongodb
+  #     MONGO_INITDB_DATABASE: giftsdb_v1
+  #     # docker exec -it gifts-mongodb mongo -u root -p giftsmongodb --authenticationDatabase admin
+
+  # # Add MySQL service
+  # mysql:
+  #   container_name: gifts-v1_mysql
+  #   image: mysql:8.4.3
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root_password
+  #     MYSQL_DATABASE: giftsdb_v1
+  #     MYSQL_USER: giftsuser
+  #     MYSQL_PASSWORD: giftspassword
+  #   ports:
+  #     - "3309:3306"
+  #   networks:
+  #     - gifts-backend
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+
+  nextjs:
+    container_name: gifts_nextjs
+    build:
+      context: .
+      dockerfile: .docker/nextjs/Dockerfile
+    ports:
+      - 3007:3007
+    volumes:
+      - ./nextjs:/app
+      - /app/node_modules
+    networks:
+      - gifts-frontend
+      - gifts-backend
+
+    # depends_on:
+    #   - mongodb
+    #   - mysql
+
+#   # Create new service for nestjs based on Dockerfile in .docker/nest directory
+#   nestjs:
+#     container_name: gifts-v1_nestjs
+#     build:
+#       context: .
+#       dockerfile: .docker/nest/Dockerfile
+#     ports:
+#       - 3008:3008
+#     volumes:
+#       - ./nestjs:/app
+#       - /app/node_modules
+#     networks:
+#       - gifts-backend
+#     depends_on:
+#       - mongodb
+#       - mysql
+
+#   # Add Nginx service
+#   nginx:
+#     container_name: gifts-v1_nginx
+#     build:
+#       context: .
+#       dockerfile: .docker/nginx/Dockerfile
+#     volumes:
+#       - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+#     ports:
+#       - 89:80
+#     depends_on:
+#       - nextjs
+#       - nestjs
+#     networks:
+#       - gifts-frontend
+#       - gifts-backend
+
+# Add networks for frontend and backend services
+networks:
+  gifts-frontend:
+    driver: bridge
+  gifts-backend:
+    driver: bridge
+
+# # Add volumes for MongoDB and MySQL data
+# volumes:
+#   mongodb-data:
+#   mysql-data:
