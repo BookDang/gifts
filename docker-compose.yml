@@ -52,22 +52,22 @@ services:
     #   - mongodb
     #   - mysql
 
-#   # Create new service for nestjs based on Dockerfile in .docker/nest directory
-#   nestjs:
-#     container_name: gifts-v1_nestjs
-#     build:
-#       context: .
-#       dockerfile: .docker/nest/Dockerfile
-#     ports:
-#       - 3008:3008
-#     volumes:
-#       - ./nestjs:/app
-#       - /app/node_modules
-#     networks:
-#       - gifts-backend
-#     depends_on:
-#       - mongodb
-#       - mysql
+  # Create new service for nestjs based on Dockerfile in .docker/nest directory
+  nestjs:
+    container_name: gifts_nestjs
+    build:
+      context: .
+      dockerfile: .docker/nest/Dockerfile
+    ports:
+      - 3008:3008
+    volumes:
+      - ./nestjs:/app
+      - /app/node_modules
+    networks:
+      - gifts-backend
+    depends_on:
+      - mongodb
+      - mysql
 
 #   # Add Nginx service
 #   nginx:
