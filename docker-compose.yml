@@ -1,0 +1,77 @@
+services:
+  # Add MySQL service
+  mysql:
+    container_name: gifts_mysql
+    image: mysql:8.4.3
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_giftsdb
+      MYSQL_DATABASE: giftsdb
+      MYSQL_USER: giftsuser
+      MYSQL_PASSWORD: giftspassword
+    ports:
+      - "3309:3306"
+    networks:
+      - gifts-backend
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  nextjs:
+    container_name: gifts_nextjs
+    build:
+      context: .
+      dockerfile: .docker/nextjs/Dockerfile
+    ports:
+      - 3007:3007
+    volumes:
+      - ./nextjs:/app
+      - /app/node_modules
+    networks:
+      - gifts-frontend
+      - gifts-backend
+    depends_on:
+      - mysql
+
+  # Create new service for nestjs based on Dockerfile in .docker/nest directory
+  nestjs:
+    container_name: gifts_nestjs
+    build:
+      context: .
+      dockerfile: .docker/nestjs/Dockerfile
+    ports:
+      - 3008:3008
+    volumes:
+      - ./nestjs:/app
+      - /app/node_modules
+    networks:
+      - gifts-backend
+    depends_on:
+      - mysql
+
+  # Add Nginx service
+  nginx:
+    container_name: gifts_nginx
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+    volumes:
+      - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 89:80
+    depends_on:
+      - nextjs
+      - nestjs
+    networks:
+      - gifts-frontend
+      - gifts-backend
+
+# Add networks for frontend and backend services
+networks:
+  gifts-frontend:
+    driver: bridge
+  gifts-backend:
+    driver: bridge
+
+# Add volumes for MongoDB and MySQL data
+volumes:
+  mongodb-data:
+  mysql-data:
