@@ -12,7 +12,7 @@ import { UsersModule } from '@/users/users.module'
       envFilePath: '.env', // Đường dẫn tới file .env
     }),
     TypeOrmModule.forRoot({
-      type: process.env.MYSQL_DB_TYPE as 'mysql',
+      type: 'mysql',
       host: process.env.MYSQL_DB_HOST,
       port: parseInt(process.env.MYSQL_DB_PORT),
       username: process.env.MYSQL_DB_USERNAME,

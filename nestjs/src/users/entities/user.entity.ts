@@ -10,7 +10,6 @@ import {
 import { GENDER } from '@/utils/constants/user.const'
 
 @Entity('users')
-@Index(["firstName", "lastName"])
 export class User {
   @PrimaryGeneratedColumn()
   id: string
