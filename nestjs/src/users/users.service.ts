@@ -1,11 +1,33 @@
-import { Injectable } from '@nestjs/common'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
+import { HttpStatus, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { CreateUserDto } from '@/users/dto/create-user.dto'
+import { UpdateUserDto } from '@/users/dto/update-user.dto'
+import { User } from '@/users/entities/user.entity'
+import { ER_DUP_ENTRY } from '@/utils/constants/mysql.const'
+
+type UserWithoutPassword = Omit<User, 'password'>
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user'
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
+
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<UserWithoutPassword | HttpStatus.CONFLICT | HttpStatus.INTERNAL_SERVER_ERROR> {
+    try {
+      const user = await this.usersRepository.create(createUserDto)
+      const { password, ...userLessPassword } = await this.usersRepository.save(user)
+      return userLessPassword
+    } catch (error) {
+      if (error.code === ER_DUP_ENTRY) {
+        return HttpStatus.CONFLICT
+      }
+      return HttpStatus.INTERNAL_SERVER_ERROR
+    }
   }
 
   findAll() {

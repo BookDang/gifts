@@ -7,12 +7,20 @@ import {
   DeleteDateColumn,
   Index,
 } from 'typeorm'
+import { Exclude } from 'class-transformer'
 import { GENDER } from '@/utils/constants/user.const'
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: string
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+  })
+  @Index({ unique: true })
+  username: string
 
   @Column({
     type: 'varchar',
@@ -44,6 +52,7 @@ export class User {
     type: 'varchar',
     length: 255,
   })
+  @Exclude()
   password: string
 
   @CreateDateColumn()
