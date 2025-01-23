@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import * as bcrypt from 'bcrypt'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
 import { User } from '@/users/entities/user.entity'
@@ -19,6 +20,7 @@ export class UsersService {
     createUserDto: CreateUserDto,
   ): Promise<UserWithoutPassword | HttpStatus.CONFLICT | HttpStatus.INTERNAL_SERVER_ERROR> {
     try {
+      createUserDto.password = await this.hashPassword(createUserDto.password)
       const user = await this.usersRepository.create(createUserDto)
       const { password, ...userLessPassword } = await this.usersRepository.save(user)
       return userLessPassword
@@ -28,6 +30,12 @@ export class UsersService {
       }
       return HttpStatus.INTERNAL_SERVER_ERROR
     }
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const saltOrRounds = 10
+    const hashPassword = await bcrypt.hash(password, saltOrRounds)
+    return hashPassword
   }
 
   findAll() {
