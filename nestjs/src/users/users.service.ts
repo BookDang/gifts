@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
@@ -32,10 +32,24 @@ export class UsersService {
     }
   }
 
-  private async hashPassword(password: string): Promise<string> {
+  async hashPassword(password: string): Promise<string> {
     const saltOrRounds = 10
     const hashPassword = await bcrypt.hash(password, saltOrRounds)
     return hashPassword
+  }
+
+  async findOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null | HttpStatus.INTERNAL_SERVER_ERROR> {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: [
+          { username: usernameOrEmail }, 
+          { email: usernameOrEmail }
+        ],
+      })
+      return user
+    } catch (error) {
+      return HttpStatus.INTERNAL_SERVER_ERROR
+    }
   }
 
   findAll() {
