@@ -5,7 +5,9 @@ import { FishService } from 'src/cats/fish.service';
 
 @Injectable()
 export class DogsService {
-  constructor(private readonly fishService: FishService) {}
+  constructor(
+    private readonly fishService: FishService
+  ) {}
   
   private readonly dogs = [];
 
