@@ -11,7 +11,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(usernameOrEmail: string, password: string): Promise<Error | any> {
+  async signIn(usernameOrEmail: string, password: string): Promise<{ access_token: string } | HttpStatus> {
     try {
       const user = await this.usersService.findOneByUsernameOrEmail(usernameOrEmail)
       if (user instanceof Error) {

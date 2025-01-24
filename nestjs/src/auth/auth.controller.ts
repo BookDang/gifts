@@ -8,17 +8,26 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async signIn(@Body() signInDto: SignInDto, @Res() res: Response): Promise<any> {
+  async signIn(@Body() signInDto: SignInDto, @Req() req: Request, @Res() res: Response): Promise<any> {
     try {
-      const token = await this.authService.signIn(signInDto.usernameOrEmail, signInDto.password)
+      const isExistToken = await this.checkToken(req)
+      if (isExistToken) {
+        return res.status(HttpStatus.OK).json(isExistToken)
+      }
+
+      const token:
+        | HttpStatus
+        | {
+            access_token: string
+          } = await this.authService.signIn(signInDto.usernameOrEmail, signInDto.password)
       if (token instanceof Error) {
         throw new Error(token.message)
       }
-      res.cookie('jwt', token, {
+      res.cookie('jwt-token', token, {
         httpOnly: true, // Prevent access via JavaScript
         secure: true, // Ensure HTTPS
         sameSite: 'strict', // Restrict cookie usage to same-origin requests
-        maxAge: 60000,
+        maxAge: 60000, // 1 minute
       })
       return res.status(HttpStatus.OK).json(token)
     } catch (error) {
@@ -27,17 +36,13 @@ export class AuthController {
   }
 
   @Get('check-token')
-  async checkToken(@Req() req: Request, @Res() res: Response): Promise<any> {
-    try {
-      const token = req.cookies.jwt
-      console.log('token', token)
-
-      if (!token) {
-        throw new Error(HttpStatus.UNAUTHORIZED.toString())
-      }
-      return res.status(HttpStatus.OK).json({ message: 'Token is valid', token })
-    } catch (error) {
-      return res.status(error.message).json({ message: error.message })
+  async checkToken(@Req() req: Request): Promise<{
+    access_token: string | null
+  }> {
+    const token = req.cookies['jwt-token']
+    if (!token) {
+      return null
     }
+    return token
   }
 }
