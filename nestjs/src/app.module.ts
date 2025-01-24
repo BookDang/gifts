@@ -5,7 +5,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'
 import { UsersModule } from '@/users/users.module'
-import { AuthModule } from './auth/auth.module'
+import { AuthModule } from '@/auth/auth.module'
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module'
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '60s' },
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
