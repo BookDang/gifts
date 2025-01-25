@@ -30,11 +30,12 @@ export class Group {
 
   @Column({
     type: 'text',
+    nullable: true,
   })
   avatar_url: string
 
-  @ManyToOne(() => User, (user) => user.groups)
-  user: User
+  @ManyToOne(() => User, (user) => user.groups, { onDelete: 'CASCADE' })
+  user: Partial<User>
 
   @CreateDateColumn()
   created_at: Date
