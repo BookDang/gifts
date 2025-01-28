@@ -6,9 +6,11 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import { GENDER } from '@/utils/constants/user.const'
+import { Group } from '@/groups/entities/group.entity'
 
 @Entity('users')
 export class User {
@@ -54,6 +56,9 @@ export class User {
   })
   @Exclude()
   password: string
+
+  @OneToMany(() => Group, (group) => group.user)
+  groups: Group[]
 
   @CreateDateColumn()
   created_at: Date

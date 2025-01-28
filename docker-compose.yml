@@ -64,6 +64,17 @@ services:
       - gifts-frontend
       - gifts-backend
 
+  phpmyadmin:
+    container_name: gifts_phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_password_giftsdb
+    ports:
+      - 8080:80
+    networks:
+      - gifts-backend
 # Add networks for frontend and backend services
 networks:
   gifts-frontend:
