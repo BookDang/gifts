@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Group } from '@/groups/entities/group.entity'
 import { CreateGroupDto } from '@/groups/dto/create-group.dto'
 import { UpdateGroupDto } from '@/groups/dto/update-group.dto'
-import { User } from '@/users/entities/user.entity'
 
 @Injectable()
 export class GroupsService {
