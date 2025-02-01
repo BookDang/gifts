@@ -2,6 +2,7 @@ import { Controller, Post, Body, Res, HttpStatus, Get, Req } from '@nestjs/commo
 import { Response, Request } from 'express'
 import { AuthService } from '@/auth/auth.service'
 import { SignInDto } from '@/auth/dto/sign-in.dto'
+import { JWT_TOKEN } from '@/utils/constants/user.const'
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,7 @@ export class AuthController {
       if (token instanceof Error) {
         throw new Error(token.message)
       }
-      res.cookie('jwt-token', token, {
+      res.cookie(JWT_TOKEN, token, {
         httpOnly: true, // Prevent access via JavaScript
         secure: true, // Ensure HTTPS
         sameSite: 'strict', // Restrict cookie usage to same-origin requests
@@ -39,7 +40,7 @@ export class AuthController {
   async checkToken(@Req() req: Request): Promise<{
     access_token: string | null
   }> {
-    const token = req.cookies['jwt-token']
+    const token = req.cookies[JWT_TOKEN]
     if (!token) {
       return null
     }
