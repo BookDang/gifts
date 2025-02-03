@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
-import { DataSource, Repository } from 'typeorm'
+import { DataSource, QueryRunner, Repository } from 'typeorm'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
 import { Group } from '@/groups/entities/group.entity'
 import { CreateGroupDto } from '@/groups/dto/create-group.dto'
@@ -24,20 +24,9 @@ export class GroupsService {
     await queryRunner.startTransaction()
 
     try {
-      const group = await this.groupsRepository.create({
-        ...createGroupDto,
-        user: { id: '' + createGroupDto.userId },
-      })
-      const newGroup = await queryRunner.manager.save(group)
-      
-      const groupUser = await this.groupUsersRepository.create({
-        status: USER_STATUSES_ENUM.ACTIVE,
-        role: USER_ROLES_ENUM.ADMIN,
-        joinedAt: new Date(),
-        user: { id: '' + createGroupDto.userId },
-        group: { id: newGroup.id },
-      })
-      await queryRunner.manager.save(groupUser)
+      const newGroup = await this.createGroup(createGroupDto, queryRunner)
+
+      await this.createGroupUser(createGroupDto, newGroup.id, queryRunner)
 
       await queryRunner.commitTransaction()
       return newGroup
@@ -47,6 +36,25 @@ export class GroupsService {
     } finally {
       await queryRunner.release()
     }
+  }
+
+  async createGroup(createGroupDto: CreateGroupDto, queryRunner: QueryRunner): Promise<Group> {
+    const group = await this.groupsRepository.create({
+      ...createGroupDto,
+      user: { id: '' + createGroupDto.userId },
+    })
+    return await queryRunner.manager.save(group)
+  }
+
+  async createGroupUser(createGroupDto: CreateGroupDto, groupId: number, queryRunner: QueryRunner): Promise<any> {
+    const groupUser = await this.groupUsersRepository.create({
+      status: USER_STATUSES_ENUM.ACTIVE,
+      role: USER_ROLES_ENUM.MEMBER,
+      joinedAt: new Date(),
+      user: { id: '' + createGroupDto.userId },
+      group: { id: groupId },
+    })
+    return await queryRunner.manager.save(groupUser)
   }
 
   findAll() {
