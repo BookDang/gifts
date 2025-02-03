@@ -5,10 +5,12 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
 import { User } from '@/users/entities/user.entity'
+import { GroupUser } from '@/groups/entities/group_user.entity'
 
 @Entity('groups')
 export class Group {
@@ -36,6 +38,9 @@ export class Group {
 
   @ManyToOne(() => User, (user) => user.groups, { onDelete: 'CASCADE' })
   user: Partial<User>
+
+  @OneToMany(() => GroupUser, (groupUser) => groupUser.group, { onDelete: 'CASCADE' })
+  groupUsers: GroupUser[]
 
   @CreateDateColumn()
   created_at: Date
