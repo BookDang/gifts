@@ -74,6 +74,10 @@ export class GroupsService {
         return HttpStatus.BAD_REQUEST
       }
 
+      if (await this.checkUserExistInGroupByIds(userId, groupId)) {
+        return HttpStatus.CONFLICT
+      }
+
       const newGroupUser = await this.createGroupUser(userId, groupId, queryRunner)
       await queryRunner.commitTransaction()
       return newGroupUser
@@ -97,6 +101,13 @@ export class GroupsService {
     const usersService = new UsersService(usersRepository)
     const isUserExist = await usersService.checkUserExistsById(userId)
     return isUserExist
+  }
+
+  async checkUserExistInGroupByIds(userId: number, groupId: number): Promise<boolean> {
+    const groupUser = await this.groupUsersRepository.findOne({
+      where: { user: { id: userId }, group: { id: groupId } },
+    })
+    return !!groupUser
   }
 
   findAll() {

@@ -1,4 +1,4 @@
-const HTTP_CODES = {
+const HTTP_CODES_MESSAGES = {
   OK: 'Cretaed',
   CREATED: 'Created',
   BAD_REQUEST: 'Bad request',
@@ -15,4 +15,4 @@ const HTTP_CODES = {
   HTTP_VERSION_NOT_SUPPORTED: 'HTTP version not supported',
   NETWORK_AUTHENTICATION_REQUIRED: 'Network authentication required',
 }
-export default HTTP_CODES
+export default HTTP_CODES_MESSAGES
