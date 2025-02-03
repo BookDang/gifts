@@ -11,6 +11,7 @@ import {
 import { Exclude } from 'class-transformer'
 import { GENDER } from '@/utils/constants/user.const'
 import { Group } from '@/groups/entities/group.entity'
+import { GroupUser } from '@/groups/entities/group_user.entity'
 
 @Entity('users')
 export class User {
@@ -59,6 +60,9 @@ export class User {
 
   @OneToMany(() => Group, (group) => group.user)
   groups: Group[]
+
+  @OneToMany(() => GroupUser, (groupUser) => groupUser.user, { onDelete: 'CASCADE' })
+  groupUsers: GroupUser[]
 
   @CreateDateColumn()
   created_at: Date

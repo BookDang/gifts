@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Req } from '@nestjs/common'
 import { Response } from 'express'
 import { UsersService } from '@/users/users.service'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
@@ -28,7 +28,7 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Req() request: Request) {
     return this.usersService.findAll()
   }
 
