@@ -13,7 +13,9 @@ import { UsersMiddleware } from '@/users/users.middleware'
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UsersMiddleware)
-    .forRoutes('users')
+    consumer
+      .apply(UsersMiddleware)
+      .exclude({ path: 'users', method: RequestMethod.POST })
+      .forRoutes('users')
   }
 }
