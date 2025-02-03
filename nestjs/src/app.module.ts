@@ -18,7 +18,7 @@ import { DataSource } from 'typeorm'
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '600s' }, // Thời gian sống của token (600s = 10 phút)
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',

@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { ConflictException, HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { DataSource, In, QueryRunner, Repository } from 'typeorm'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
 import { Group } from '@/groups/entities/group.entity'
@@ -35,7 +35,7 @@ export class GroupsService {
       return newGroup
     } catch (error) {
       await queryRunner.rollbackTransaction()
-      return error
+      return HttpStatus.INTERNAL_SERVER_ERROR
     } finally {
       await queryRunner.release()
     }
@@ -83,7 +83,7 @@ export class GroupsService {
       return newGroupUser
     } catch (error) {
       await queryRunner.rollbackTransaction()
-      return error
+      return HttpStatus.INTERNAL_SERVER_ERROR
     } finally {
       await queryRunner.release()
     }

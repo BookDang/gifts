@@ -28,7 +28,7 @@ export class AuthController {
         httpOnly: true, // Prevent access via JavaScript
         secure: true, // Ensure HTTPS
         sameSite: 'strict', // Restrict cookie usage to same-origin requests
-        maxAge: 60000, // 1 minute
+        maxAge: (10 * 60000), // 10 minutes
       })
       return res.status(HttpStatus.OK).json(token)
     } catch (error) {
@@ -44,6 +44,7 @@ export class AuthController {
     if (!token) {
       return null
     }
-    return token
+    // return token
+    return null
   }
 }

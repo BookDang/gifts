@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res, UnauthorizedException, ConflictException } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common'
 import { Response } from 'express'
 import { GroupsService } from '@/groups/groups.service'
 import { CreateGroupDto } from '@/groups/dto/create-group.dto'
@@ -30,6 +30,7 @@ export class GroupsController {
   async addUser(@Body() createGroupUserDto: CreateGroupUserDto, @Res() res: Response): Promise<Response> {
     try {
       const result: HttpStatus | Group = await this.groupsService.addUserToGroup(createGroupUserDto)
+
       if (result instanceof Error) {
         throw new Error(result.message)
       }
