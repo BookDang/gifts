@@ -16,7 +16,7 @@ import { GroupUser } from '@/groups/entities/group_user.entity'
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id: string
+  id: number
 
   @Column({
     type: 'varchar',

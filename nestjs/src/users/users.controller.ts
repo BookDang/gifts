@@ -3,6 +3,7 @@ import { Response } from 'express'
 import { UsersService } from '@/users/users.service'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
+import HTTP_CODES from '@/utils/constants/http_codes.const'
 
 @Controller('users')
 export class UsersController {
@@ -14,7 +15,7 @@ export class UsersController {
       const result = await this.usersService.create(createUserDto)
 
       if (result === HttpStatus.CONFLICT) {
-        return res.status(HttpStatus.CONFLICT).json({ message: 'Conflict' })
+        return res.status(HttpStatus.CONFLICT).json({ message: HTTP_CODES.CONFLICT })
       }
 
       if (result === HttpStatus.INTERNAL_SERVER_ERROR) {

@@ -52,6 +52,14 @@ export class UsersService {
     }
   }
 
+  async checkUserExistsById(id: number): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    })
+    return !!user
+  }
+
+
   findAll() {
     return `This action returns all users`
   }

@@ -4,6 +4,8 @@ import { GroupsService } from '@/groups/groups.service'
 import { CreateGroupDto } from '@/groups/dto/create-group.dto'
 import { UpdateGroupDto } from '@/groups/dto/update-group.dto'
 import { Group } from './entities/group.entity'
+import { CreateGroupUserDto } from '@/groups/dto/create-group_user.dto'
+import HTTP_CODES from '@/utils/constants/http_codes.const'
 
 @Controller('groups')
 export class GroupsController {
@@ -18,6 +20,24 @@ export class GroupsController {
         throw new Error(result.message)
       }
       return res.status(HttpStatus.CREATED).json(result)
+    } catch (error) {
+      return res.status(error.message).json({ message: error.message })
+    }
+  }
+
+  @Post('add-user-to-group')
+  async addUser(@Body() createGroupUserDto: CreateGroupUserDto, @Res() res: Response): Promise<Response> {
+    try {
+      const result: HttpStatus | Group = await this.groupsService.addUserToGroup(createGroupUserDto)
+      if (result instanceof Error) {
+        throw new Error(result.message)
+      }
+
+      if (result === HttpStatus.BAD_REQUEST) {
+        return res.status(HttpStatus.BAD_REQUEST).json({ message: HTTP_CODES.BAD_REQUEST })
+      }
+
+      return res.status(HttpStatus.OK).json(result)
     } catch (error) {
       return res.status(error.message).json({ message: error.message })
     }
