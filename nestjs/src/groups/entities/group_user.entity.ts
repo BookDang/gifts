@@ -9,7 +9,7 @@ import {
 } from 'typeorm'
 import { User } from '@/users/entities/user.entity'
 import { Group } from '@/groups/entities/group.entity'
-import { USER_ROLES, USER_STATUSES } from '@/utils/constants/user.const'
+import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
 
 @Entity()
 export class GroupUser {
@@ -29,17 +29,17 @@ export class GroupUser {
 
   @Column({
     type: 'enum',
-    enum: USER_ROLES,
-    default: USER_ROLES[0],
+    enum: USER_ROLES_ENUM,
+    default: USER_ROLES_ENUM.MEMBER,
   })
-  role: (typeof USER_ROLES)[number]
+  role: USER_ROLES_ENUM
 
   @Column({
     type: 'enum',
-    enum: USER_STATUSES,
-    default: USER_STATUSES[0],
+    enum: USER_STATUSES_ENUM,
+    default: USER_STATUSES_ENUM.ACTIVE,
   })
-  status: (typeof USER_STATUSES)[number]
+  status: USER_STATUSES_ENUM
 
   @UpdateDateColumn()
   updated_at: Date

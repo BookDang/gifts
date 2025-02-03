@@ -7,6 +7,7 @@ import { AppService } from '@/app.service'
 import { UsersModule } from '@/users/users.module'
 import { AuthModule } from '@/auth/auth.module'
 import { GroupsModule } from './groups/groups.module'
+import { DataSource } from 'typeorm'
 
 @Module({
   imports: [
@@ -35,4 +36,6 @@ import { GroupsModule } from './groups/groups.module'
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}
