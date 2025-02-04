@@ -11,7 +11,6 @@ export class UsersMiddleware implements NestMiddleware {
         const payload = await jwtService.verifyAsync(req.cookies['jwt_token'].access_token, {
           secret: process.env.JWT_SECRET,
         })
-        req['user'] = payload
         next()
       } catch (error) {
         throw new UnauthorizedException()

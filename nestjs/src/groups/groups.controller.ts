@@ -17,7 +17,6 @@ export class GroupsController {
     try {
       const result: HttpStatus | Group = await this.groupsService.create(createGroupDto)
       if (result instanceof Error) {
-        console.log('result instanceof Error', result)
         throw new Error(result.message)
       }
       return res.status(HttpStatus.CREATED).json(result)
