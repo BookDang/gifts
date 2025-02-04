@@ -3,6 +3,7 @@ import { Response } from 'express'
 import { UsersService } from '@/users/users.service'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
+import { USER_EXISTS } from '@/utils/constants/user.const'
 
 @Controller('users')
 export class UsersController {
@@ -13,22 +14,22 @@ export class UsersController {
     try {
       const result = await this.usersService.create(createUserDto)
 
-      if (result === HttpStatus.CONFLICT) {
-        return res.status(HttpStatus.CONFLICT).json({ message: 'Conflict' })
-      }
-
-      if (result === HttpStatus.INTERNAL_SERVER_ERROR) {
-        throw new Error()
+      if (result instanceof Error) {
+        throw new Error(result.message)
       }
 
       return res.status(HttpStatus.CREATED).json(result)
     } catch (error) {
+      if (error.message) {
+        return res.status(error.message).json({ message: USER_EXISTS })
+      }
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' })
     }
   }
 
   @Get()
   findAll(@Req() request: Request) {
+    console.log('Request user Book', request['user'])
     return this.usersService.findAll()
   }
 

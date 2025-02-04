@@ -3,6 +3,7 @@ import { Response, Request } from 'express'
 import { AuthService } from '@/auth/auth.service'
 import { SignInDto } from '@/auth/dto/sign-in.dto'
 import { JWT_TOKEN } from '@/utils/constants/user.const'
+import HTTP_CODES_MESSAGES from '@/utils/constants/http_codes.const'
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +18,7 @@ export class AuthController {
       }
 
       const token:
-        | HttpStatus
+        | Error
         | {
             access_token: string
           } = await this.authService.signIn(signInDto.usernameOrEmail, signInDto.password)
@@ -28,11 +29,15 @@ export class AuthController {
         httpOnly: true, // Prevent access via JavaScript
         secure: true, // Ensure HTTPS
         sameSite: 'strict', // Restrict cookie usage to same-origin requests
-        maxAge: 60000, // 1 minute
+        // maxAge: (10 * 60000), // 10 minutes
+        maxAge: 1000 * 60 * 2, // 2 minute
       })
       return res.status(HttpStatus.OK).json(token)
     } catch (error) {
-      return res.status(error.message).json({ message: error.message })
+      if (error.message) {
+        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
+      }
+      return res.status(500).json({ message: HTTP_CODES_MESSAGES[500] })
     }
   }
 
@@ -44,6 +49,7 @@ export class AuthController {
     if (!token) {
       return null
     }
-    return token
+    // return token
+    return null
   }
 }

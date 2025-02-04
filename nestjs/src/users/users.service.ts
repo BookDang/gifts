@@ -1,6 +1,6 @@
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
@@ -18,17 +18,19 @@ export class UsersService {
 
   async create(
     createUserDto: CreateUserDto,
-  ): Promise<UserWithoutPassword | HttpStatus.CONFLICT | HttpStatus.INTERNAL_SERVER_ERROR> {
+  ): Promise<UserWithoutPassword | Error> {
     try {
       createUserDto.password = await this.hashPassword(createUserDto.password)
       const user = await this.usersRepository.create(createUserDto)
       const { password, ...userLessPassword } = await this.usersRepository.save(user)
       return userLessPassword
     } catch (error) {
+      console.log('error', error.code);
+      
       if (error.code === ER_DUP_ENTRY) {
-        return HttpStatus.CONFLICT
+        return new Error(HttpStatus.CONFLICT.toString())
       }
-      return HttpStatus.INTERNAL_SERVER_ERROR
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
     }
   }
 
@@ -38,7 +40,7 @@ export class UsersService {
     return hashPassword
   }
 
-  async findOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null | HttpStatus.INTERNAL_SERVER_ERROR> {
+  async findOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null | Error> {
     try {
       const user = await this.usersRepository.findOne({
         where: [
@@ -48,9 +50,17 @@ export class UsersService {
       })
       return user
     } catch (error) {
-      return HttpStatus.INTERNAL_SERVER_ERROR
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
     }
   }
+
+  async checkUserExistsById(id: number): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    })
+    return !!user
+  }
+
 
   findAll() {
     return `This action returns all users`
