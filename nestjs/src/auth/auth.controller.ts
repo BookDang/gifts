@@ -18,7 +18,7 @@ export class AuthController {
       }
 
       const token:
-        | HttpStatus
+        | Error
         | {
             access_token: string
           } = await this.authService.signIn(signInDto.usernameOrEmail, signInDto.password)
@@ -34,7 +34,10 @@ export class AuthController {
       })
       return res.status(HttpStatus.OK).json(token)
     } catch (error) {
-      return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
+      if (error.message) {
+        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
+      }
+      return res.status(500).json({ message: HTTP_CODES_MESSAGES[500] })
     }
   }
 

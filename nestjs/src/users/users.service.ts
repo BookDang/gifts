@@ -1,6 +1,6 @@
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
@@ -48,7 +48,7 @@ export class UsersService {
       })
       return user
     } catch (error) {
-      return new Error(error.message)
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
     }
   }
 

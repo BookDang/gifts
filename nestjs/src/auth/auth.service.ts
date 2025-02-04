@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
 import { JwtService } from '@nestjs/jwt'
 import { UsersService } from '@/users/users.service'
@@ -16,21 +16,22 @@ export class AuthService {
     try {
       const user = await this.usersService.findOneByUsernameOrEmail(usernameOrEmail)
       if (user instanceof Error) {
-        throw new Error(user.message)
+        throw new InternalServerErrorException()
       }
-
       if (user === null) {
-        throw new Error(HttpStatus.UNAUTHORIZED.toString())
+        throw new UnauthorizedException()
       }
-
       const isPasswordMatch = await this.comparePassword(password, (user as User).password)
       if (!isPasswordMatch) {
-        throw new Error(HttpStatus.UNAUTHORIZED.toString())
+        throw new UnauthorizedException()
       }
 
       return this.createJWTToken(user as User)
     } catch (error) {
-      return new Error(error.message)
+      if (error.status) {
+        return new Error(error.status.toString())
+      }
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
     }
   }
 
