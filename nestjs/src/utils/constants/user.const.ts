@@ -7,3 +7,5 @@ export const USER_ROLES = ['admin', 'member', 'moderator'] as const
 export const USER_STATUSES = ['active', 'pending'] as const
 
 export const USER_EXISTS_IN_GROUP = 'User already exists in group'
+
+export const USER_EXISTS = 'User already exists'
