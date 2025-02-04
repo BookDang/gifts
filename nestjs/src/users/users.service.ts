@@ -18,17 +18,19 @@ export class UsersService {
 
   async create(
     createUserDto: CreateUserDto,
-  ): Promise<UserWithoutPassword | HttpStatus.CONFLICT | HttpStatus.INTERNAL_SERVER_ERROR> {
+  ): Promise<UserWithoutPassword | Error> {
     try {
       createUserDto.password = await this.hashPassword(createUserDto.password)
       const user = await this.usersRepository.create(createUserDto)
       const { password, ...userLessPassword } = await this.usersRepository.save(user)
       return userLessPassword
     } catch (error) {
+      console.log('error', error.code);
+      
       if (error.code === ER_DUP_ENTRY) {
-        return HttpStatus.CONFLICT
+        return new Error(HttpStatus.CONFLICT.toString())
       }
-      return HttpStatus.INTERNAL_SERVER_ERROR
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
     }
   }
 

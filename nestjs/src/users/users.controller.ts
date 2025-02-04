@@ -14,16 +14,15 @@ export class UsersController {
     try {
       const result = await this.usersService.create(createUserDto)
 
-      if (result === HttpStatus.CONFLICT) {
-        return res.status(HttpStatus.CONFLICT).json({ message: USER_EXISTS })
-      }
-
-      if (result === HttpStatus.INTERNAL_SERVER_ERROR) {
-        throw new Error()
+      if (result instanceof Error) {
+        throw new Error(result.message)
       }
 
       return res.status(HttpStatus.CREATED).json(result)
     } catch (error) {
+      if (error.message) {
+        return res.status(error.message).json({ message: USER_EXISTS })
+      }
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' })
     }
   }
