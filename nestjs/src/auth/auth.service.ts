@@ -6,19 +6,20 @@ import { User } from '@/users/entities/user.entity'
 
 @Injectable()
 export class AuthService {
+  test = ''
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(usernameOrEmail: string, password: string): Promise<{ access_token: string } | HttpStatus> {
+  async signIn(usernameOrEmail: string, password: string): Promise<{ access_token: string } | Error> {
     try {
       const user = await this.usersService.findOneByUsernameOrEmail(usernameOrEmail)
       if (user instanceof Error) {
-        throw new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+        throw new Error(user.message)
       }
 
-      if (!user) {
+      if (user === null) {
         throw new Error(HttpStatus.UNAUTHORIZED.toString())
       }
 
@@ -29,7 +30,7 @@ export class AuthService {
 
       return this.createJWTToken(user as User)
     } catch (error) {
-      return error
+      return new Error(error.message)
     }
   }
 

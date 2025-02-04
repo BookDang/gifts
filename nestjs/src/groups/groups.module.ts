@@ -4,7 +4,7 @@ import { GroupsService } from '@/groups/groups.service'
 import { GroupsController } from '@/groups/groups.controller'
 import { Group } from '@/groups/entities/group.entity'
 import { GroupUser } from '@/groups/entities/group_user.entity'
-import { UsersMiddleware } from '@/middlewares/users.middleware'
+import { AuthMiddleware } from '@/middlewares/auth.middleware'
 import { UsersModule } from '@/users/users.module'
 
 @Module({
@@ -17,6 +17,6 @@ import { UsersModule } from '@/users/users.module'
 })
 export class GroupsModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UsersMiddleware).forRoutes('groups')
+    consumer.apply(AuthMiddleware).forRoutes('groups')
   }
 }

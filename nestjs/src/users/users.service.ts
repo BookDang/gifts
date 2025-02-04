@@ -38,7 +38,7 @@ export class UsersService {
     return hashPassword
   }
 
-  async findOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null | HttpStatus.INTERNAL_SERVER_ERROR> {
+  async findOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null | Error> {
     try {
       const user = await this.usersRepository.findOne({
         where: [
@@ -48,7 +48,7 @@ export class UsersService {
       })
       return user
     } catch (error) {
-      return HttpStatus.INTERNAL_SERVER_ERROR
+      return new Error(error.message)
     }
   }
 

@@ -30,6 +30,7 @@ export class UsersController {
 
   @Get()
   findAll(@Req() request: Request) {
+    console.log('Request user Book', request['user'])
     return this.usersService.findAll()
   }
 

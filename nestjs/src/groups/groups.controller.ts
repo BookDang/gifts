@@ -15,7 +15,7 @@ export class GroupsController {
   @Post()
   async create(@Body() createGroupDto: CreateGroupDto, @Res() res: Response): Promise<Response> {
     try {
-      const result: HttpStatus | Group = await this.groupsService.create(createGroupDto)
+      const result: Error | Group = await this.groupsService.create(createGroupDto)
       if (result instanceof Error) {
         throw new Error(result.message)
       }
@@ -28,23 +28,15 @@ export class GroupsController {
   @Post('add-user-to-group')
   async addUser(@Body() createGroupUserDto: CreateGroupUserDto, @Res() res: Response): Promise<Response> {
     try {
-      const result: HttpStatus | Group = await this.groupsService.addUserToGroup(createGroupUserDto)
+      const result: Group | Error = await this.groupsService.addUserToGroup(createGroupUserDto)
 
       if (result instanceof Error) {
         throw new Error(result.message)
       }
 
-      if (result === HttpStatus.BAD_REQUEST) {
-        return res.status(HttpStatus.BAD_REQUEST).json({ message: HTTP_CODES_MESSAGES.BAD_REQUEST })
-      }
-
-      if (result === HttpStatus.CONFLICT) {
-        return res.status(HttpStatus.CONFLICT).json({ message: USER_EXISTS_IN_GROUP })
-      }
-
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      return res.status(error.message).json({ message: error.message })
+      return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
     }
   }
 

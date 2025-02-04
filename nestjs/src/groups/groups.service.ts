@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { DataSource, In, QueryRunner, Repository } from 'typeorm'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
 import { Group } from '@/groups/entities/group.entity'
@@ -21,7 +21,7 @@ export class GroupsService {
     private dataSource: DataSource,
   ) {}
 
-  async create(createGroupDto: CreateGroupDto): Promise<Group | HttpStatus> {
+  async create(createGroupDto: CreateGroupDto): Promise<Group | Error> {
     const queryRunner = this.dataSource.createQueryRunner()
     await queryRunner.connect()
     await queryRunner.startTransaction()
@@ -35,7 +35,7 @@ export class GroupsService {
       return newGroup
     } catch (error) {
       await queryRunner.rollbackTransaction()
-      return HttpStatus.INTERNAL_SERVER_ERROR
+      return new Error(error.message)
     } finally {
       await queryRunner.release()
     }
@@ -60,7 +60,7 @@ export class GroupsService {
     return await queryRunner.manager.save(groupUser)
   }
 
-  async addUserToGroup(createGroupUserDto: CreateGroupUserDto): Promise<Group | HttpStatus> {
+  async addUserToGroup(createGroupUserDto: CreateGroupUserDto): Promise<Group | Error> {
     const queryRunner = this.dataSource.createQueryRunner()
     await queryRunner.connect()
     await queryRunner.startTransaction()
@@ -68,14 +68,15 @@ export class GroupsService {
     try {
       const { userId, groupId } = createGroupUserDto
       if (!await this.checkGroupExistById(groupId)) {
-        return HttpStatus.BAD_REQUEST
+        throw new Error(HttpStatus.BAD_REQUEST.toString())
       }
+
       if (!(await this.checkUserExistById(userId, queryRunner))) {
-        return HttpStatus.BAD_REQUEST
+        throw new Error(HttpStatus.BAD_REQUEST.toString())
       }
 
       if (await this.checkUserExistInGroupByIds(userId, groupId)) {
-        return HttpStatus.CONFLICT
+        throw new Error(HttpStatus.CONFLICT.toString())
       }
 
       const newGroupUser = await this.createGroupUser(userId, groupId, queryRunner)
@@ -83,7 +84,7 @@ export class GroupsService {
       return newGroupUser
     } catch (error) {
       await queryRunner.rollbackTransaction()
-      return HttpStatus.INTERNAL_SERVER_ERROR
+      return new Error(error.message)
     } finally {
       await queryRunner.release()
     }
