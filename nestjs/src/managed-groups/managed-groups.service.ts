@@ -1,24 +1,16 @@
-import {
-  BadRequestException,
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { BadRequestException, ConflictException, HttpStatus, Injectable } from '@nestjs/common'
 import { DataSource, QueryRunner, Repository } from 'typeorm'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
-import { Group } from '@/groups/entities/group.entity'
-import { CreateGroupDto } from '@/groups/dto/create-group.dto'
-import { UpdateGroupDto } from '@/groups/dto/update-group.dto'
-import { GroupUser } from '@/groups/entities/group_user.entity'
-import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
-import { CreateGroupUserDto } from '@/groups/dto/create-group_user.dto'
+import { Group } from '@/managed-groups/entities/group.entity'
+import { GroupUser } from '@/managed-groups/entities/group_user.entity'
+import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
+import { USER_STATUSES_ENUM, USER_ROLES_ENUM } from '@/utils/enums/user.enum'
+import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
 import { UsersService } from '@/users/users.service'
 import { User } from '@/users/entities/user.entity'
 
 @Injectable()
-export class GroupsService {
+export class ManagedGroupsService {
   constructor(
     @InjectRepository(Group)
     private readonly groupsRepository: Repository<Group>,
@@ -46,26 +38,6 @@ export class GroupsService {
     } finally {
       await queryRunner.release()
     }
-  }
-
-  async createGroup(createGroupDto: CreateGroupDto, queryRunner: QueryRunner): Promise<Group> {
-    const group = await this.groupsRepository.create({
-      ...createGroupDto,
-      user: { id: createGroupDto.userId },
-    })
-    return await queryRunner.manager.save(group)
-  }
-
-  async createGroupUser(userId: number, groupId: number, queryRunner: QueryRunner): Promise<GroupUser> {
-    const groupUser = await this.groupUsersRepository.create({
-      status: USER_STATUSES_ENUM.ACTIVE,
-      role: USER_ROLES_ENUM.MEMBER,
-      joinedAt: new Date(),
-      user: { id: userId },
-      group: { id: groupId },
-    })
-    const newGroupUser = await queryRunner.manager.save(groupUser)
-    return newGroupUser
   }
 
   async addUserToGroup(createGroupUserDto: CreateGroupUserDto): Promise<GroupUser | Error> {
@@ -100,6 +72,26 @@ export class GroupsService {
     }
   }
 
+  async createGroup(createGroupDto: CreateGroupDto, queryRunner: QueryRunner): Promise<Group> {
+    const group = await this.groupsRepository.create({
+      ...createGroupDto,
+      user: { id: createGroupDto.userId },
+    })
+    return await queryRunner.manager.save(group)
+  }
+
+  async createGroupUser(userId: number, groupId: number, queryRunner: QueryRunner): Promise<GroupUser> {
+    const groupUser = await this.groupUsersRepository.create({
+      status: USER_STATUSES_ENUM.ACTIVE,
+      role: USER_ROLES_ENUM.MEMBER,
+      joinedAt: new Date(),
+      user: { id: userId },
+      group: { id: groupId },
+    })
+    const newGroupUser = await queryRunner.manager.save(groupUser)
+    return newGroupUser
+  }
+
   async checkGroupExistById(groupId: number): Promise<boolean> {
     const group = await this.groupsRepository.findOne({
       where: { id: groupId, deleted_at: null },
@@ -119,21 +111,5 @@ export class GroupsService {
       where: { user: { id: userId }, group: { id: groupId } },
     })
     return !!groupUser
-  }
-
-  findAll() {
-    return `This action returns all groups`
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} group`
-  }
-
-  update(id: number, updateGroupDto: UpdateGroupDto) {
-    return `This action updates a #${id} group`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} group`
   }
 }
