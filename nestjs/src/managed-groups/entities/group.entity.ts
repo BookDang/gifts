@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 import { User } from '@/users/entities/user.entity'
-import { GroupUser } from '@/groups/entities/group_user.entity'
+import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 
 @Entity('groups')
 export class Group {

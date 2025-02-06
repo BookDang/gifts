@@ -8,7 +8,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm'
 import { User } from '@/users/entities/user.entity'
-import { Group } from '@/groups/entities/group.entity'
+import { Group } from '@/managed-groups/entities/group.entity'
 import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
 
 @Entity()

@@ -10,8 +10,8 @@ import {
 } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import { GENDER } from '@/utils/constants/user.const'
-import { Group } from '@/groups/entities/group.entity'
-import { GroupUser } from '@/groups/entities/group_user.entity'
+import { Group } from '@/managed-groups/entities/group.entity'
+import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 
 @Entity('users')
 export class User {
