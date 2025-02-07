@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, HttpStatus, Param } from '@nestjs/common'
+import { Controller, Post, Body, Res, HttpStatus, Param, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { ManagedGroupsService } from '@/managed-groups/managed-groups.service'
 import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
@@ -7,6 +7,7 @@ import HTTP_CODES_MESSAGES from '@/utils/constants/http_codes.const'
 import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { CreatePointDto } from '@/managed-groups/dto/create-point.dto'
+import { AdminModeratorGuard } from '@/managed-groups/guards/admin_moderator.guard'
 
 @Controller('managed-groups')
 export class ManagedGroupsController {
@@ -28,6 +29,7 @@ export class ManagedGroupsController {
     }
   }
 
+  @UseGuards(AdminModeratorGuard)
   @Post(':groupId/members/')
   async addUser(@Body() createGroupUserDto: CreateGroupUserDto, @Res() res: Response): Promise<Response> {
     try {
@@ -46,7 +48,7 @@ export class ManagedGroupsController {
     }
   }
 
-  
+  @UseGuards(AdminModeratorGuard)
   @Post(':groupId/members/:userId/points')
   async addPoints(@Body() createPointDto: CreatePointDto, @Param() params: {
     groupId: string,

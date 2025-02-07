@@ -96,6 +96,9 @@ export class ManagedGroupsService {
       })
       return await this.dataSource.manager.save(point)
     } catch (error) {
+
+      console.log('ManagedGroupsService -> addPointsToUserInGroup -> error', error);
+      
       if (error.status) {
         return new Error(error.status.toString())
       }
