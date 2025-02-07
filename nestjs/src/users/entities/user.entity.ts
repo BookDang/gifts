@@ -12,6 +12,7 @@ import { Exclude } from 'class-transformer'
 import { GENDER } from '@/utils/constants/user.const'
 import { Group } from '@/managed-groups/entities/group.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
+import { Point } from '@/managed-groups/entities/point.entity'
 
 @Entity('users')
 export class User {
@@ -63,6 +64,9 @@ export class User {
 
   @OneToMany(() => GroupUser, (groupUser) => groupUser.user, { onDelete: 'CASCADE' })
   groupUsers: GroupUser[]
+
+  @OneToMany(() => Point, (point) => point.user, { onDelete: 'CASCADE' })
+  points: Point[]
 
   @CreateDateColumn()
   created_at: Date

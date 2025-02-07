@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, HttpStatus, Injectable } from '@nestjs/common'
+import { BadRequestException, ConflictException, ForbiddenException, HttpStatus, Injectable } from '@nestjs/common'
 import { DataSource, QueryRunner, Repository } from 'typeorm'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
 import { Group } from '@/managed-groups/entities/group.entity'
@@ -8,6 +8,7 @@ import { USER_STATUSES_ENUM, USER_ROLES_ENUM } from '@/utils/enums/user.enum'
 import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
 import { UsersService } from '@/users/users.service'
 import { User } from '@/users/entities/user.entity'
+import { Point } from '@/managed-groups/entities/point.entity'
 
 @Injectable()
 export class ManagedGroupsService {
@@ -28,7 +29,7 @@ export class ManagedGroupsService {
     try {
       const newGroup = await this.createGroup(createGroupDto, queryRunner)
 
-      await this.createGroupUser(createGroupDto.userId, newGroup.id, queryRunner)
+      await this.addGroupUser(createGroupDto.userId, newGroup.id, queryRunner, USER_ROLES_ENUM.ADMIN)
 
       await queryRunner.commitTransaction()
       return newGroup
@@ -58,7 +59,7 @@ export class ManagedGroupsService {
         throw new ConflictException()
       }
 
-      const newGroupUser = await this.createGroupUser(userId, groupId, queryRunner)
+      const newGroupUser = await this.addGroupUser(userId, groupId, queryRunner)
       await queryRunner.commitTransaction()
       return newGroupUser
     } catch (error) {
@@ -72,6 +73,37 @@ export class ManagedGroupsService {
     }
   }
 
+  async addPointsToUserInGroup(pointDTO: {
+    userId: number
+    groupId: number
+    points: number
+    expirationDate: Date
+  }): Promise<Point | Error> {
+    try {
+      const groupUser = await this.groupUsersRepository.findOne({
+        where: { user: { id: pointDTO.userId }, group: { id: pointDTO.groupId } },
+      })
+
+      if (!groupUser) {
+        throw new BadRequestException()
+      }
+
+      const point = await this.dataSource.manager.create(Point, {
+        group: { id: pointDTO.groupId },
+        user: { id: pointDTO.userId },
+        points: pointDTO.points,
+        expiration_date: pointDTO.expirationDate,
+      })
+      return await this.dataSource.manager.save(point)
+    } catch (error) {
+      if (error.status) {
+        return new Error(error.status.toString())
+      }
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+    }
+    return null
+  }
+
   async createGroup(createGroupDto: CreateGroupDto, queryRunner: QueryRunner): Promise<Group> {
     const group = await this.groupsRepository.create({
       ...createGroupDto,
@@ -80,11 +112,16 @@ export class ManagedGroupsService {
     return await queryRunner.manager.save(group)
   }
 
-  async createGroupUser(userId: number, groupId: number, queryRunner: QueryRunner): Promise<GroupUser> {
+  async addGroupUser(
+    userId: number,
+    groupId: number,
+    queryRunner: QueryRunner,
+    role: USER_ROLES_ENUM = USER_ROLES_ENUM.MEMBER,
+  ): Promise<GroupUser> {
     const groupUser = await this.groupUsersRepository.create({
       status: USER_STATUSES_ENUM.ACTIVE,
-      role: USER_ROLES_ENUM.MEMBER,
-      joinedAt: new Date(),
+      role: role,
+      joined_at: new Date(),
       user: { id: userId },
       group: { id: groupId },
     })
