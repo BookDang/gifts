@@ -10,7 +10,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 import { User } from '@/users/entities/user.entity'
-import { GroupUser } from '@/groups/entities/group_user.entity'
+import { GroupUser } from '@/managed-groups/entities/group_user.entity'
+import { Point } from '@/managed-groups/entities/point.entity'
 
 @Entity('groups')
 export class Group {
@@ -41,6 +42,9 @@ export class Group {
 
   @OneToMany(() => GroupUser, (groupUser) => groupUser.group, { onDelete: 'CASCADE' })
   groupUsers: GroupUser[]
+
+  @OneToMany(() => Point, (point) => point.group, { onDelete: 'CASCADE' })
+  points: Point[]
 
   @CreateDateColumn()
   created_at: Date

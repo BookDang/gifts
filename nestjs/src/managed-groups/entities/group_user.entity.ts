@@ -6,12 +6,14 @@ import {
   JoinColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm'
 import { User } from '@/users/entities/user.entity'
-import { Group } from '@/groups/entities/group.entity'
+import { Group } from '@/managed-groups/entities/group.entity'
 import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
+import { Point } from '@/managed-groups/entities/point.entity'
 
-@Entity()
+@Entity('group_users')
 export class GroupUser {
   @PrimaryGeneratedColumn()
   id: number
@@ -25,7 +27,7 @@ export class GroupUser {
   group: Group
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  joinedAt: Date
+  joined_at: Date
 
   @Column({
     type: 'enum',

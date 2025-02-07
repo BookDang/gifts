@@ -1,24 +1,17 @@
-import {
-  BadRequestException,
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { BadRequestException, ConflictException, ForbiddenException, HttpStatus, Injectable } from '@nestjs/common'
 import { DataSource, QueryRunner, Repository } from 'typeorm'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
-import { Group } from '@/groups/entities/group.entity'
-import { CreateGroupDto } from '@/groups/dto/create-group.dto'
-import { UpdateGroupDto } from '@/groups/dto/update-group.dto'
-import { GroupUser } from '@/groups/entities/group_user.entity'
-import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
-import { CreateGroupUserDto } from '@/groups/dto/create-group_user.dto'
+import { Group } from '@/managed-groups/entities/group.entity'
+import { GroupUser } from '@/managed-groups/entities/group_user.entity'
+import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
+import { USER_STATUSES_ENUM, USER_ROLES_ENUM } from '@/utils/enums/user.enum'
+import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
 import { UsersService } from '@/users/users.service'
 import { User } from '@/users/entities/user.entity'
+import { Point } from '@/managed-groups/entities/point.entity'
 
 @Injectable()
-export class GroupsService {
+export class ManagedGroupsService {
   constructor(
     @InjectRepository(Group)
     private readonly groupsRepository: Repository<Group>,
@@ -36,7 +29,7 @@ export class GroupsService {
     try {
       const newGroup = await this.createGroup(createGroupDto, queryRunner)
 
-      await this.createGroupUser(createGroupDto.userId, newGroup.id, queryRunner)
+      await this.addGroupUser(createGroupDto.userId, newGroup.id, queryRunner, USER_ROLES_ENUM.ADMIN)
 
       await queryRunner.commitTransaction()
       return newGroup
@@ -46,26 +39,6 @@ export class GroupsService {
     } finally {
       await queryRunner.release()
     }
-  }
-
-  async createGroup(createGroupDto: CreateGroupDto, queryRunner: QueryRunner): Promise<Group> {
-    const group = await this.groupsRepository.create({
-      ...createGroupDto,
-      user: { id: createGroupDto.userId },
-    })
-    return await queryRunner.manager.save(group)
-  }
-
-  async createGroupUser(userId: number, groupId: number, queryRunner: QueryRunner): Promise<GroupUser> {
-    const groupUser = await this.groupUsersRepository.create({
-      status: USER_STATUSES_ENUM.ACTIVE,
-      role: USER_ROLES_ENUM.MEMBER,
-      joinedAt: new Date(),
-      user: { id: userId },
-      group: { id: groupId },
-    })
-    const newGroupUser = await queryRunner.manager.save(groupUser)
-    return newGroupUser
   }
 
   async addUserToGroup(createGroupUserDto: CreateGroupUserDto): Promise<GroupUser | Error> {
@@ -86,7 +59,7 @@ export class GroupsService {
         throw new ConflictException()
       }
 
-      const newGroupUser = await this.createGroupUser(userId, groupId, queryRunner)
+      const newGroupUser = await this.addGroupUser(userId, groupId, queryRunner)
       await queryRunner.commitTransaction()
       return newGroupUser
     } catch (error) {
@@ -98,6 +71,62 @@ export class GroupsService {
     } finally {
       await queryRunner.release()
     }
+  }
+
+  async addPointsToUserInGroup(pointDTO: {
+    userId: number
+    groupId: number
+    points: number
+    expirationDate: Date
+  }): Promise<Point | Error> {
+    try {
+      const groupUser = await this.groupUsersRepository.findOne({
+        where: { user: { id: pointDTO.userId }, group: { id: pointDTO.groupId } },
+      })
+
+      if (!groupUser) {
+        throw new BadRequestException()
+      }
+
+      const point = await this.dataSource.manager.create(Point, {
+        group: { id: pointDTO.groupId },
+        user: { id: pointDTO.userId },
+        points: pointDTO.points,
+        expiration_date: pointDTO.expirationDate,
+      })
+      return await this.dataSource.manager.save(point)
+    } catch (error) {
+      if (error.status) {
+        return new Error(error.status.toString())
+      }
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+    }
+    return null
+  }
+
+  async createGroup(createGroupDto: CreateGroupDto, queryRunner: QueryRunner): Promise<Group> {
+    const group = await this.groupsRepository.create({
+      ...createGroupDto,
+      user: { id: createGroupDto.userId },
+    })
+    return await queryRunner.manager.save(group)
+  }
+
+  async addGroupUser(
+    userId: number,
+    groupId: number,
+    queryRunner: QueryRunner,
+    role: USER_ROLES_ENUM = USER_ROLES_ENUM.MEMBER,
+  ): Promise<GroupUser> {
+    const groupUser = await this.groupUsersRepository.create({
+      status: USER_STATUSES_ENUM.ACTIVE,
+      role: role,
+      joined_at: new Date(),
+      user: { id: userId },
+      group: { id: groupId },
+    })
+    const newGroupUser = await queryRunner.manager.save(groupUser)
+    return newGroupUser
   }
 
   async checkGroupExistById(groupId: number): Promise<boolean> {
@@ -119,21 +148,5 @@ export class GroupsService {
       where: { user: { id: userId }, group: { id: groupId } },
     })
     return !!groupUser
-  }
-
-  findAll() {
-    return `This action returns all groups`
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} group`
-  }
-
-  update(id: number, updateGroupDto: UpdateGroupDto) {
-    return `This action updates a #${id} group`
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} group`
   }
 }
