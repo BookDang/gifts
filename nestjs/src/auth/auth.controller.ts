@@ -1,6 +1,6 @@
 import { AuthService } from '@/auth/auth.service'
 import { SignInDto } from '@/auth/dto/sign-in.dto'
-import HTTP_CODES_MESSAGES from '@/utils/constants/http_codes.const'
+import HTTP_CODES_MESSAGES, { DEFAULT_ERROR_RESPONSE } from '@/utils/constants/http_codes.const'
 import { JWT_TOKEN } from '@/utils/constants/user.const'
 import { Body, Controller, Get, HttpStatus, Post, Req, Res } from '@nestjs/common'
 import { Request, Response } from 'express'
@@ -35,11 +35,12 @@ export class AuthController {
       return res.status(HttpStatus.OK).json(token)
     } catch (error) {
       if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
+        return res.status(error.message).json({
+          message: HTTP_CODES_MESSAGES[error.message],
+          statusCode: error.message,
+        })
       }
-      console.log('Error: ', error)
-
-      return res.status(500).json({ message: HTTP_CODES_MESSAGES[500] })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
     }
   }
 
