@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res, HttpStatus, Param, UseGuards } from '@nestjs/common'
+import { Controller, Post, Body, Res, HttpStatus, Param, UseGuards, Get } from '@nestjs/common'
 import { Response } from 'express'
 import { ManagedGroupsService } from '@/managed-groups/managed-groups.service'
 import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
@@ -50,18 +50,47 @@ export class ManagedGroupsController {
 
   @UseGuards(AdminModeratorGuard)
   @Post(':groupId/members/:userId/points')
-  async addPoints(@Body() createPointDto: CreatePointDto, @Param() params: {
-    groupId: string,
-    userId: string
-  }, @Res() res: Response): Promise<Response> {
+  async addPoints(
+    @Body() createPointDto: CreatePointDto,
+    @Param()
+    params: {
+      groupId: string
+      userId: string
+    },
+    @Res() res: Response,
+  ): Promise<Response> {
     try {
       const pointDTO = {
-        groupId: + params.groupId,
-        userId: + params.userId,
+        groupId: +params.groupId,
+        userId: +params.userId,
         points: createPointDto.points,
-        expirationDate: new Date(createPointDto.expirationDate + '')
+        expirationDate: new Date(createPointDto.expirationDate + ''),
       }
       const result = await this.managedGroupsService.addPointsToUserInGroup(pointDTO)
+      if (result instanceof Error) {
+        throw new Error(result.message)
+      }
+      return res.status(HttpStatus.OK).json(result)
+    } catch (error) {
+      if (error.message) {
+        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
+      }
+      return res.status(500).json({ message: HTTP_CODES_MESSAGES[500] })
+    }
+  }
+
+  @UseGuards(AdminModeratorGuard)
+  @Get(':groupId/members/:userId/points')
+  async getPoints(
+    @Param()
+    params: {
+      groupId: string
+      userId: string
+    },
+    @Res() res: Response,
+  ): Promise<Response> {
+    try {
+      const result = await this.managedGroupsService.getPointsOfUserInGroup(+params.groupId, +params.userId)
       if (result instanceof Error) {
         throw new Error(result.message)
       }

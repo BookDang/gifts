@@ -1,9 +1,9 @@
-import { Controller, Post, Body, Res, HttpStatus, Get, Req } from '@nestjs/common'
-import { Response, Request } from 'express'
 import { AuthService } from '@/auth/auth.service'
 import { SignInDto } from '@/auth/dto/sign-in.dto'
-import { JWT_TOKEN } from '@/utils/constants/user.const'
 import HTTP_CODES_MESSAGES from '@/utils/constants/http_codes.const'
+import { JWT_TOKEN } from '@/utils/constants/user.const'
+import { Body, Controller, Get, HttpStatus, Post, Req, Res } from '@nestjs/common'
+import { Request, Response } from 'express'
 
 @Controller('auth')
 export class AuthController {
@@ -37,6 +37,8 @@ export class AuthController {
       if (error.message) {
         return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
       }
+      console.log('Error: ', error)
+
       return res.status(500).json({ message: HTTP_CODES_MESSAGES[500] })
     }
   }
