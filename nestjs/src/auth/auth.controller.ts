@@ -52,7 +52,6 @@ export class AuthController {
     if (!token) {
       return null
     }
-    // return token
-    return null
+    return token
   }
 }

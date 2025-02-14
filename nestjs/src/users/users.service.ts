@@ -1,11 +1,11 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { In, Repository } from 'typeorm'
-import * as bcrypt from 'bcrypt'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
 import { User } from '@/users/entities/user.entity'
 import { ER_DUP_ENTRY } from '@/utils/constants/mysql.const'
+import { HttpStatus, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import * as bcrypt from 'bcrypt'
+import { Repository } from 'typeorm'
 
 type UserWithoutPassword = Omit<User, 'password'>
 
@@ -16,17 +16,13 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(
-    createUserDto: CreateUserDto,
-  ): Promise<UserWithoutPassword | Error> {
+  async create(createUserDto: CreateUserDto): Promise<UserWithoutPassword | Error> {
     try {
       createUserDto.password = await this.hashPassword(createUserDto.password)
       const user = await this.usersRepository.create(createUserDto)
       const { password, ...userLessPassword } = await this.usersRepository.save(user)
       return userLessPassword
     } catch (error) {
-      console.log('error', error.code);
-      
       if (error.code === ER_DUP_ENTRY) {
         return new Error(HttpStatus.CONFLICT.toString())
       }
@@ -43,10 +39,7 @@ export class UsersService {
   async findOneByUsernameOrEmail(usernameOrEmail: string): Promise<User | null | Error> {
     try {
       const user = await this.usersRepository.findOne({
-        where: [
-          { username: usernameOrEmail }, 
-          { email: usernameOrEmail }
-        ],
+        where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
       })
       return user
     } catch (error) {
@@ -60,7 +53,6 @@ export class UsersService {
     })
     return !!user
   }
-
 
   findAll() {
     return `This action returns all users`
