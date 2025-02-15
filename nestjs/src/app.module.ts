@@ -10,6 +10,7 @@ import { DataSource } from 'typeorm'
 import { CatsModule } from './cats/cats.module'
 import { DogsModule } from './dogs/dogs.module'
 import { ManagedGroupsModule } from './managed-groups/managed-groups.module'
+import { DolphinsModule } from './dolphins/dolphins.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ManagedGroupsModule } from './managed-groups/managed-groups.module'
     ManagedGroupsModule,
     CatsModule,
     DogsModule,
+    DolphinsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
