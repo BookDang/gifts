@@ -1,0 +1,37 @@
+const HTTP_CODES_MESSAGES = {
+  200: 'OK',
+  201: 'Created',
+  400: 'Bad request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not found',
+  409: 'Conflict',
+  500: 'Internal server error',
+  503: 'Service unavailable',
+  504: 'Gateway timeout',
+  429: 'Too many requests',
+  501: 'Not implemented',
+  502: 'Bad gateway',
+  505: 'HTTP version not supported',
+  511: 'Network authentication required',
+  CREATED: 'Created',
+  BAD_REQUEST: 'Bad request',
+  NOT_FOUND: 'Not found',
+  UNAUTHORIZED: 'Unauthorized',
+  FORBIDDEN: 'Forbidden',
+  CONFLICT: 'Conflict',
+  INTERNAL_SERVER_ERROR: 'Internal server error',
+  SERVICE_UNAVAILABLE: 'Service unavailable',
+  GATEWAY_TIMEOUT: 'Gateway timeout',
+  TOO_MANY_REQUESTS: 'Too many requests',
+  NOT_IMPLEMENTED: 'Not implemented',
+  BAD_GATEWAY: 'Bad gateway',
+  HTTP_VERSION_NOT_SUPPORTED: 'HTTP version not supported',
+  NETWORK_AUTHENTICATION_REQUIRED: 'Network authentication required',
+}
+export default HTTP_CODES_MESSAGES
+
+export const DEFAULT_ERROR_RESPONSE = {
+  message: HTTP_CODES_MESSAGES[500],
+  statusCode: 500,
+}
