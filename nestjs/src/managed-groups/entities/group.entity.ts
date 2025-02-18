@@ -1,17 +1,18 @@
+import { GroupUser } from '@/managed-groups/entities/group_user.entity'
+import { Point } from '@/managed-groups/entities/point.entity'
+import { User } from '@/users/entities/user.entity'
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { User } from '@/users/entities/user.entity'
-import { GroupUser } from '@/managed-groups/entities/group_user.entity'
-import { Point } from '@/managed-groups/entities/point.entity'
 
 @Entity('groups')
 export class Group {
@@ -38,6 +39,7 @@ export class Group {
   avatar_url: string
 
   @ManyToOne(() => User, (user) => user.groups, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: Partial<User>
 
   @OneToMany(() => GroupUser, (groupUser) => groupUser.group, { onDelete: 'CASCADE' })
