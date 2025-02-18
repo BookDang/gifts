@@ -119,9 +119,9 @@ export class ManagedGroupsService {
       return await this.groupsRepository.update(
         { id: groupId },
         {
-          group_name: updateGroupDto.group_name,
-          description: updateGroupDto.description,
-          avatar_url: updateGroupDto.avatar_url,
+          group_name: updateGroupDto.group_name || group.group_name,
+          description: updateGroupDto.description || group.description,
+          avatar_url: updateGroupDto.avatar_url || group.avatar_url,
         },
       )
     } catch (error) {
