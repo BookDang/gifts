@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MinLength, MaxLength, IsOptional, IsInt, IsPositive } from 'class-validator'
+import { IsInt, IsNotEmpty, IsOptional, IsPositive, IsString, MaxLength, MinLength } from 'class-validator'
 
 export class CreateGroupDto {
   @IsNotEmpty()

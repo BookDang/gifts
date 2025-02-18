@@ -29,8 +29,8 @@ export class AuthController {
         httpOnly: true, // Prevent access via JavaScript
         secure: true, // Ensure HTTPS
         sameSite: 'strict', // Restrict cookie usage to same-origin requests
-        // maxAge: (10 * 60000), // 10 minutes
-        maxAge: 1000 * 60 * 2, // 2 minute
+        maxAge: (1000 * 60 * 10), // 10 minutes
+        // maxAge: 1000 * 60 * 2, // 2 minute
       })
       return res.status(HttpStatus.OK).json(token)
     } catch (error) {

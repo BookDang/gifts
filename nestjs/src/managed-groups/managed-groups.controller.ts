@@ -1,13 +1,15 @@
 import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
 import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
 import { CreatePointDto } from '@/managed-groups/dto/create-point.dto'
+import { UpdateGroupDto } from '@/managed-groups/dto/update-group.dto'
 import { Group } from '@/managed-groups/entities/group.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { AdminModeratorGuard } from '@/managed-groups/guards/admin_moderator.guard'
 import { ManagedGroupsService } from '@/managed-groups/managed-groups.service'
 import HTTP_CODES_MESSAGES, { DEFAULT_ERROR_RESPONSE } from '@/utils/constants/http_codes.const'
-import { Body, Controller, Get, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
+import { UpdateResult } from 'typeorm'
 
 @Controller('managed-groups')
 export class ManagedGroupsController {
@@ -21,6 +23,26 @@ export class ManagedGroupsController {
         throw new Error(result.message)
       }
       return res.status(HttpStatus.CREATED).json(result)
+    } catch (error) {
+      if (error.message) {
+        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
+      }
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+    }
+  }
+
+  @Put(':groupId')
+  async update(
+    @Body() updateGroupDto: UpdateGroupDto,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Res() res: Response,
+  ): Promise<Response> {
+    try {
+      const result: UpdateResult | Error = await this.managedGroupsService.update(groupId, updateGroupDto)
+      if (result instanceof Error) {
+        throw new Error(result.message)
+      }
+      return res.status(HttpStatus.OK).json(result)
     } catch (error) {
       if (error.message) {
         return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
