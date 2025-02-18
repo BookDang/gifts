@@ -30,3 +30,8 @@ const HTTP_CODES_MESSAGES = {
   NETWORK_AUTHENTICATION_REQUIRED: 'Network authentication required',
 }
 export default HTTP_CODES_MESSAGES
+
+export const DEFAULT_ERROR_RESPONSE = {
+  message: HTTP_CODES_MESSAGES[500],
+  statusCode: 500,
+}

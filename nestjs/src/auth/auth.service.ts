@@ -1,8 +1,8 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common'
-import * as bcrypt from 'bcrypt'
-import { JwtService } from '@nestjs/jwt'
-import { UsersService } from '@/users/users.service'
 import { User } from '@/users/entities/user.entity'
+import { UsersService } from '@/users/users.service'
+import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -15,10 +15,8 @@ export class AuthService {
   async signIn(usernameOrEmail: string, password: string): Promise<{ access_token: string } | Error> {
     try {
       const user = await this.usersService.findOneByUsernameOrEmail(usernameOrEmail)
-      if (user instanceof Error) {
-        throw new InternalServerErrorException()
-      }
-      if (user === null) {
+
+      if (user instanceof Error || user === null) {
         throw new UnauthorizedException()
       }
       const isPasswordMatch = await this.comparePassword(password, (user as User).password)

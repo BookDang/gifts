@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Req } from '@nestjs/common'
-import { Response } from 'express'
-import { UsersService } from '@/users/users.service'
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
+import { UsersService } from '@/users/users.service'
+import { DEFAULT_ERROR_RESPONSE } from '@/utils/constants/http_codes.const'
 import { USER_EXISTS } from '@/utils/constants/user.const'
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Req, Res } from '@nestjs/common'
+import { Response } from 'express'
 
 @Controller('users')
 export class UsersController {
@@ -23,7 +24,7 @@ export class UsersController {
       if (error.message) {
         return res.status(error.message).json({ message: USER_EXISTS })
       }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' })
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
     }
   }
 

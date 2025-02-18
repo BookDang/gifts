@@ -1,14 +1,15 @@
-import { BadRequestException, ConflictException, ForbiddenException, HttpStatus, Injectable } from '@nestjs/common'
-import { DataSource, QueryRunner, Repository } from 'typeorm'
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
+import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
+import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
 import { Group } from '@/managed-groups/entities/group.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
-import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
-import { USER_STATUSES_ENUM, USER_ROLES_ENUM } from '@/utils/enums/user.enum'
-import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
-import { UsersService } from '@/users/users.service'
-import { User } from '@/users/entities/user.entity'
 import { Point } from '@/managed-groups/entities/point.entity'
+import { User } from '@/users/entities/user.entity'
+import { UsersService } from '@/users/users.service'
+import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
+import { BadRequestException, ConflictException, HttpStatus, Injectable } from '@nestjs/common'
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
+import * as moment from 'moment'
+import { DataSource, MoreThanOrEqual, QueryRunner, Repository } from 'typeorm'
 
 @Injectable()
 export class ManagedGroupsService {
@@ -17,6 +18,8 @@ export class ManagedGroupsService {
     private readonly groupsRepository: Repository<Group>,
     @InjectRepository(GroupUser)
     private readonly groupUsersRepository: Repository<GroupUser>,
+    @InjectRepository(Point)
+    private readonly pointsRepository: Repository<Point>,
     @InjectDataSource()
     private dataSource: DataSource,
   ) {}
@@ -127,6 +130,20 @@ export class ManagedGroupsService {
     })
     const newGroupUser = await queryRunner.manager.save(groupUser)
     return newGroupUser
+  }
+
+  async getPointsOfUserInGroup(groupId: number, userId: number): Promise<Point[] | Error> {
+    try {
+      const expirationDate = moment().format('yyyy-MM-DD 00:00:00')
+      const points = await this.pointsRepository.findBy({
+        user: { id: userId },
+        group: { id: groupId },
+        expiration_date: MoreThanOrEqual(new Date(expirationDate)),
+      })
+      return points
+    } catch (error) {
+      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+    }
   }
 
   async checkGroupExistById(groupId: number): Promise<boolean> {
