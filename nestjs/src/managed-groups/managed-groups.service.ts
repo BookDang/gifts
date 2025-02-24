@@ -78,14 +78,13 @@ export class ManagedGroupsService {
   }
 
   async addPointsToUserInGroup(pointDTO: {
-    userId: number
     groupId: number
     points: number
     expirationDate: Date
   }): Promise<Point | Error> {
     try {
       const groupUser = await this.groupUsersRepository.findOne({
-        where: { user: { id: pointDTO.userId }, group: { id: pointDTO.groupId } },
+        where: { group: { id: pointDTO.groupId } },
       })
 
       if (!groupUser) {
@@ -93,8 +92,7 @@ export class ManagedGroupsService {
       }
 
       const point = await this.dataSource.manager.create(Point, {
-        group: { id: pointDTO.groupId },
-        user: { id: pointDTO.userId },
+        group_user_id: { id: pointDTO.groupId },
         points: pointDTO.points,
         expiration_date: pointDTO.expirationDate,
       })
@@ -161,8 +159,7 @@ export class ManagedGroupsService {
     try {
       const expirationDate = moment().format('yyyy-MM-DD 00:00:00')
       const points = await this.pointsRepository.findBy({
-        user: { id: userId },
-        group: { id: groupId },
+        group_user: { id: groupId },
         expiration_date: MoreThanOrEqual(new Date(expirationDate)),
       })
       return points

@@ -62,20 +62,18 @@ export class ManagedGroupsController {
   }
 
   @UseGuards(AdminModeratorGuard)
-  @Post(':groupId/members/:userId/points')
+  @Post(':groupUserId/members/:userId/points')
   async addPoints(
     @Body() createPointDto: CreatePointDto,
     @Param()
     params: {
-      groupId: string
-      userId: string
+      groupUserId: string
     },
     @Res() res: Response,
   ): Promise<Response> {
     try {
       const pointDTO = {
-        groupId: +params.groupId,
-        userId: +params.userId,
+        groupUserId: +params.groupUserId,
         points: createPointDto.points,
         expirationDate: new Date(createPointDto.expirationDate + ''),
       }
