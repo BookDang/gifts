@@ -6,7 +6,7 @@ import { Group } from '@/managed-groups/entities/group.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { AdminModeratorGuard } from '@/managed-groups/guards/admin_moderator.guard'
 import { ManagedGroupsService } from '@/managed-groups/managed-groups.service'
-import HTTP_CODES_MESSAGES, { DEFAULT_ERROR_RESPONSE } from '@/utils/constants/http_codes.const'
+import { responseError } from '@/utils/helpers/response_error.helper'
 import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { UpdateResult } from 'typeorm'
@@ -24,10 +24,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.CREATED).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
@@ -44,10 +41,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
@@ -63,10 +57,7 @@ export class ManagedGroupsController {
 
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
@@ -94,10 +85,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
@@ -118,13 +106,17 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({
-          message: HTTP_CODES_MESSAGES[error.message],
-          statusCode: error.message,
-        })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      return responseError(res, error)
+    }
+  }
+
+  @UseGuards(AdminModeratorGuard)
+  @Get(':groupId')
+  async getUsersInGroup() {
+    try {
+      return 'This action returns all users in group'
+    } catch (error) {
+      
     }
   }
 }
