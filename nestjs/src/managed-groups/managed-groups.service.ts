@@ -172,9 +172,17 @@ export class ManagedGroupsService {
   async getPointsOfUserInGroup(groupId: number, userId: number): Promise<Point[] | Error> {
     try {
       const expirationDate = moment().format('yyyy-MM-DD 00:00:00')
-      const points = await this.pointsRepository.findBy({
-        group_user: { id: groupId },
-        expiration_date: MoreThanOrEqual(new Date(expirationDate)),
+      const groupUser = await this.groupUsersRepository.findOne({
+        where: { group: { id: groupId }, user: { id: userId } },
+      })
+      if (!groupUser) {
+        throw new BadRequestException()
+      }
+      const points = await this.pointsRepository.find({
+        where: {
+          group_user: { id: groupUser.id },
+          expiration_date: MoreThanOrEqual(new Date(expirationDate)),
+        },
       })
       return points
     } catch (error) {

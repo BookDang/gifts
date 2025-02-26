@@ -88,7 +88,7 @@ export class ManagedGroupsController {
 
   @UseGuards(AdminModeratorGuard)
   @Get(':groupId/members/:userId/points')
-  async getPoints(
+  async getPointsOfUserInGroup(
     @Param()
     params: {
       groupId: string
