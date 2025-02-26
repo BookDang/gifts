@@ -24,7 +24,7 @@ export class ManagedGroupsService {
     @InjectRepository(Point)
     private readonly pointsRepository: Repository<Point>,
     @InjectDataSource()
-    private dataSource: DataSource,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createGroupDto: CreateGroupDto): Promise<Group | Error> {
