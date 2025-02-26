@@ -62,18 +62,17 @@ export class ManagedGroupsController {
   }
 
   @UseGuards(AdminModeratorGuard)
-  @Post(':groupUserId/members/:userId/points')
+  @Post(':groupId/members/:userId/points')
   async addPoints(
     @Body() createPointDto: CreatePointDto,
-    @Param()
-    params: {
-      groupUserId: string
-    },
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('userId', ParseIntPipe) userId: number,
     @Res() res: Response,
   ): Promise<Response> {
     try {
       const pointDTO = {
-        groupUserId: +params.groupUserId,
+        groupId: groupId,
+        userId: userId,
         points: createPointDto.points,
         expirationDate: new Date(createPointDto.expirationDate + ''),
       }
@@ -109,12 +108,28 @@ export class ManagedGroupsController {
   }
 
   @UseGuards(AdminModeratorGuard)
-  @Get(':groupId')
-  async getUsersInGroup() {
+  @Get(':groupId/members')
+  async getUsersInGroup(@Res() res: Response, @Param('groupId', ParseIntPipe) groupId: number): Promise<Response> {
     try {
-      return 'This action returns all users in group'
+      const result = await this.managedGroupsService.getUsersInGroup(groupId)
+      if (result instanceof Error) {
+        throw new Error(result.message)
+      }
+      return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      
+      return error
+    }
+  }
+
+  @UseGuards(AdminModeratorGuard)
+  @Get(':groupId')
+  async getGroupById(@Res() res: Response, @Param('groupId', ParseIntPipe) groupId: number): Promise<Response> {
+    try {
+      const result = await this.managedGroupsService.getGroupById(groupId)
+
+      return res.status(HttpStatus.OK).json(result) 
+    } catch (error) {
+      responseError(res, error)
     }
   }
 }
