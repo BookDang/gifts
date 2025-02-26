@@ -7,8 +7,8 @@ import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { AdminModeratorGuard } from '@/managed-groups/guards/admin_moderator.guard'
 import { ManagedGroupsService } from '@/managed-groups/managed-groups.service'
 import { responseError } from '@/utils/helpers/response_error.helper'
-import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Res, UseGuards } from '@nestjs/common'
-import { Response } from 'express'
+import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Req, Res, UseGuards } from '@nestjs/common'
+import { Request, Response } from 'express'
 import { UpdateResult } from 'typeorm'
 
 @Controller('managed-groups')
@@ -24,7 +24,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.CREATED).json(result)
     } catch (error) {
-      responseError(res, error)
+      return responseError(res, error)
     }
   }
 
@@ -41,7 +41,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      responseError(res, error)
+      return responseError(res, error)
     }
   }
 
@@ -57,7 +57,7 @@ export class ManagedGroupsController {
 
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      responseError(res, error)
+      return responseError(res, error)
     }
   }
 
@@ -82,7 +82,21 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      responseError(res, error)
+      return responseError(res, error)
+    }
+  }
+
+  @Get()
+  async getGroupsByUserId(@Res() res: Response, @Req() req: Request): Promise<Response> {
+    try {
+      const userId = req['user'].id
+      const result = await this.managedGroupsService.getGroupsByUserId(userId)
+      if (result instanceof Error) {
+        throw new Error(result.message)
+      }
+      return res.status(HttpStatus.OK).json(result)
+    } catch (error) {
+      return responseError(res, error)
     }
   }
 
@@ -117,7 +131,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      return error
+      return responseError(res, error)
     }
   }
 
@@ -129,7 +143,7 @@ export class ManagedGroupsController {
 
       return res.status(HttpStatus.OK).json(result) 
     } catch (error) {
-      responseError(res, error)
+      return responseError(res, error)
     }
   }
 }

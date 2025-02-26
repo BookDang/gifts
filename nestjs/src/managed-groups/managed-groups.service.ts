@@ -158,6 +158,18 @@ export class ManagedGroupsService {
     return newGroupUser
   }
 
+  async getGroupsByUserId(userId: number): Promise<Group[] | Error> {
+    try {
+      return this.groupsRepository.find({
+        where: { user: { id: userId }, deleted_at: null },
+        relations: ['groupUsers.points'],
+      })
+    }
+    catch (error) {
+      return errorInternalServer
+    }
+  }
+
   async getUsersInGroup(groupId: number): Promise<GroupUser[] | Error> {
     try {
       return this.groupUsersRepository.find({
