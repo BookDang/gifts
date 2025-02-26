@@ -11,6 +11,8 @@ RUN npm install
 
 COPY ./nextjs /app
 
+RUN npm run build
+
 EXPOSE 3007
 
 CMD ["npm", "run", "dev"]
