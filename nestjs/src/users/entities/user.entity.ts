@@ -1,18 +1,17 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  Index,
-  OneToMany,
-} from 'typeorm'
-import { Exclude } from 'class-transformer'
-import { GENDER } from '@/utils/constants/user.const'
 import { Group } from '@/managed-groups/entities/group.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
-import { Point } from '@/managed-groups/entities/point.entity'
+import { GENDER } from '@/utils/constants/user.const'
+import { Exclude } from 'class-transformer'
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 
 @Entity('users')
 export class User {
@@ -64,9 +63,6 @@ export class User {
 
   @OneToMany(() => GroupUser, (groupUser) => groupUser.user, { onDelete: 'CASCADE' })
   groupUsers: GroupUser[]
-
-  @OneToMany(() => Point, (point) => point.user, { onDelete: 'CASCADE' })
-  points: Point[]
 
   @CreateDateColumn()
   created_at: Date

@@ -6,7 +6,7 @@ import { Group } from '@/managed-groups/entities/group.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { AdminModeratorGuard } from '@/managed-groups/guards/admin_moderator.guard'
 import { ManagedGroupsService } from '@/managed-groups/managed-groups.service'
-import HTTP_CODES_MESSAGES, { DEFAULT_ERROR_RESPONSE } from '@/utils/constants/http_codes.const'
+import { responseError } from '@/utils/helpers/response_error.helper'
 import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { UpdateResult } from 'typeorm'
@@ -24,10 +24,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.CREATED).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
@@ -44,10 +41,7 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
@@ -63,10 +57,7 @@ export class ManagedGroupsController {
 
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
@@ -74,17 +65,14 @@ export class ManagedGroupsController {
   @Post(':groupId/members/:userId/points')
   async addPoints(
     @Body() createPointDto: CreatePointDto,
-    @Param()
-    params: {
-      groupId: string
-      userId: string
-    },
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('userId', ParseIntPipe) userId: number,
     @Res() res: Response,
   ): Promise<Response> {
     try {
       const pointDTO = {
-        groupId: +params.groupId,
-        userId: +params.userId,
+        groupId: groupId,
+        userId: userId,
         points: createPointDto.points,
         expirationDate: new Date(createPointDto.expirationDate + ''),
       }
@@ -94,16 +82,13 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: HTTP_CODES_MESSAGES[error.message] })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 
   @UseGuards(AdminModeratorGuard)
   @Get(':groupId/members/:userId/points')
-  async getPoints(
+  async getPointsOfUserInGroup(
     @Param()
     params: {
       groupId: string
@@ -118,13 +103,33 @@ export class ManagedGroupsController {
       }
       return res.status(HttpStatus.OK).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({
-          message: HTTP_CODES_MESSAGES[error.message],
-          statusCode: error.message,
-        })
+      return responseError(res, error)
+    }
+  }
+
+  @UseGuards(AdminModeratorGuard)
+  @Get(':groupId/members')
+  async getUsersInGroup(@Res() res: Response, @Param('groupId', ParseIntPipe) groupId: number): Promise<Response> {
+    try {
+      const result = await this.managedGroupsService.getUsersInGroup(groupId)
+      if (result instanceof Error) {
+        throw new Error(result.message)
       }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      return res.status(HttpStatus.OK).json(result)
+    } catch (error) {
+      return error
+    }
+  }
+
+  @UseGuards(AdminModeratorGuard)
+  @Get(':groupId')
+  async getGroupById(@Res() res: Response, @Param('groupId', ParseIntPipe) groupId: number): Promise<Response> {
+    try {
+      const result = await this.managedGroupsService.getGroupById(groupId)
+
+      return res.status(HttpStatus.OK).json(result) 
+    } catch (error) {
+      responseError(res, error)
     }
   }
 }

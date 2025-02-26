@@ -1,8 +1,7 @@
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
 import { UsersService } from '@/users/users.service'
-import { DEFAULT_ERROR_RESPONSE } from '@/utils/constants/http_codes.const'
-import { USER_EXISTS } from '@/utils/constants/user.const'
+import { responseError } from '@/utils/helpers/response_error.helper'
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Req, Res } from '@nestjs/common'
 import { Response } from 'express'
 
@@ -21,10 +20,7 @@ export class UsersController {
 
       return res.status(HttpStatus.CREATED).json(result)
     } catch (error) {
-      if (error.message) {
-        return res.status(error.message).json({ message: USER_EXISTS })
-      }
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
+      responseError(res, error)
     }
   }
 

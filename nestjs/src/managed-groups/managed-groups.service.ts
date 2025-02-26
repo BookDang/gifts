@@ -12,6 +12,8 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
 import * as moment from 'moment'
 import { DataSource, MoreThanOrEqual, QueryRunner, Repository, UpdateResult } from 'typeorm'
 
+const errorInternalServer = new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+
 @Injectable()
 export class ManagedGroupsService {
   constructor(
@@ -39,7 +41,7 @@ export class ManagedGroupsService {
       return newGroup
     } catch (error) {
       await queryRunner.rollbackTransaction()
-      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+      return errorInternalServer
     } finally {
       await queryRunner.release()
     }
@@ -71,21 +73,21 @@ export class ManagedGroupsService {
       if (error.status) {
         return new Error(error.status.toString())
       }
-      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+      return errorInternalServer
     } finally {
       await queryRunner.release()
     }
   }
 
   async addPointsToUserInGroup(pointDTO: {
-    userId: number
     groupId: number
+    userId: number
     points: number
     expirationDate: Date
   }): Promise<Point | Error> {
     try {
       const groupUser = await this.groupUsersRepository.findOne({
-        where: { user: { id: pointDTO.userId }, group: { id: pointDTO.groupId } },
+        where: { group: { id: pointDTO.groupId }, user: { id: pointDTO.userId } },
       })
 
       if (!groupUser) {
@@ -93,8 +95,7 @@ export class ManagedGroupsService {
       }
 
       const point = await this.dataSource.manager.create(Point, {
-        group: { id: pointDTO.groupId },
-        user: { id: pointDTO.userId },
+        group_user: { id: groupUser.id },
         points: pointDTO.points,
         expiration_date: pointDTO.expirationDate,
       })
@@ -103,7 +104,7 @@ export class ManagedGroupsService {
       if (error.status) {
         return new Error(error.status.toString())
       }
-      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+      return errorInternalServer
     }
   }
 
@@ -128,7 +129,7 @@ export class ManagedGroupsService {
       if (error.status) {
         return new Error(error.status.toString())
       }
-      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+      return errorInternalServer
     }
   }
 
@@ -157,17 +158,45 @@ export class ManagedGroupsService {
     return newGroupUser
   }
 
+  async getUsersInGroup(groupId: number): Promise<GroupUser[] | Error> {
+    try {
+      return this.groupUsersRepository.find({
+        where: { group: { id: groupId } },
+        relations: ['user'],
+      })
+    } catch (error) {
+      return errorInternalServer
+    }
+  }
+
   async getPointsOfUserInGroup(groupId: number, userId: number): Promise<Point[] | Error> {
     try {
       const expirationDate = moment().format('yyyy-MM-DD 00:00:00')
-      const points = await this.pointsRepository.findBy({
-        user: { id: userId },
-        group: { id: groupId },
-        expiration_date: MoreThanOrEqual(new Date(expirationDate)),
+      const groupUser = await this.groupUsersRepository.findOne({
+        where: { group: { id: groupId }, user: { id: userId } },
+      })
+      if (!groupUser) {
+        throw new BadRequestException()
+      }
+      const points = await this.pointsRepository.find({
+        where: {
+          group_user: { id: groupUser.id },
+          expiration_date: MoreThanOrEqual(new Date(expirationDate)),
+        },
       })
       return points
     } catch (error) {
-      return new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+      return errorInternalServer
+    }
+  }
+
+  async getGroupById(groupId: number): Promise<Group | Error> {
+    try {
+      return this.groupsRepository.findOne({
+        where: { id: groupId, deleted_at: null },
+      })
+    } catch (error) {
+      return errorInternalServer
     }
   }
 

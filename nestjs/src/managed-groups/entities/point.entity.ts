@@ -6,23 +6,18 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm'
-import { User } from '@/users/entities/user.entity'
-import { Group } from '@/managed-groups/entities/group.entity'
+import { GroupUser } from './group_user.entity'
 
 @Entity('points')
 export class Point {
   @PrimaryGeneratedColumn()
   id: number
 
-  @ManyToOne(() => Group, (group) => group.points, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'group_id' })
-  group: Group
-
-  @ManyToOne(() => User, (user) => user.points, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user: User
+  @ManyToOne(() => GroupUser, (groupUser) => groupUser.points)
+  @JoinColumn({ name: 'group_user_id' })
+  group_user: GroupUser
 
   @Column({ type: 'int', default: 0 })
   points: number

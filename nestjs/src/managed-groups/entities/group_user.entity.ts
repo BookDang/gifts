@@ -1,17 +1,17 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  Column,
-  JoinColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  OneToMany,
-} from 'typeorm'
-import { User } from '@/users/entities/user.entity'
 import { Group } from '@/managed-groups/entities/group.entity'
-import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
 import { Point } from '@/managed-groups/entities/point.entity'
+import { User } from '@/users/entities/user.entity'
+import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm'
 
 @Entity('group_users')
 export class GroupUser {
@@ -25,6 +25,9 @@ export class GroupUser {
   @ManyToOne(() => Group, (group) => group.groupUsers)
   @JoinColumn({ name: 'group_id' })
   group: Group
+
+  @OneToMany(() => Point, (point) => point.group_user, { onDelete: 'CASCADE' })
+  points: Point[]
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   joined_at: Date
