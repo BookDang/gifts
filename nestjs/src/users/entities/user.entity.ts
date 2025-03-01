@@ -58,6 +58,12 @@ export class User {
   @Exclude()
   password: string
 
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  avatar_url: string
+
   @OneToMany(() => Group, (group) => group.user)
   groups: Group[]
 

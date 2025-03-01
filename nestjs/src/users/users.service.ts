@@ -1,6 +1,7 @@
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
 import { User } from '@/users/entities/user.entity'
+import { DEFAULT_IMAGE_URL } from '@/utils/constants/commons.const'
 import { ER_DUP_ENTRY } from '@/utils/constants/mysql.const'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -19,6 +20,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<UserWithoutPassword | Error> {
     try {
       createUserDto.password = await this.hashPassword(createUserDto.password)
+      createUserDto.avatar_url = createUserDto.avatar_url || DEFAULT_IMAGE_URL
       const user = await this.usersRepository.create(createUserDto)
       const { password, ...userLessPassword } = await this.usersRepository.save(user)
       return userLessPassword
