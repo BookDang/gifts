@@ -1,7 +1,7 @@
 import { CreateUserDto } from '@/users/dto/create-user.dto'
 import { UpdateUserDto } from '@/users/dto/update-user.dto'
 import { User } from '@/users/entities/user.entity'
-import { DEFAULT_IMAGE_URL } from '@/utils/constants/commons.const'
+import { DEFAULT_IMAGE_URL, SALT_OR_ROUNDS } from '@/utils/constants/commons.const'
 import { ER_DUP_ENTRY } from '@/utils/constants/mysql.const'
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -33,8 +33,7 @@ export class UsersService {
   }
 
   async hashPassword(password: string): Promise<string> {
-    const saltOrRounds = 10
-    const hashPassword = await bcrypt.hash(password, saltOrRounds)
+    const hashPassword = await bcrypt.hash(password, SALT_OR_ROUNDS)
     return hashPassword
   }
 
