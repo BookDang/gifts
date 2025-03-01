@@ -6,6 +6,7 @@ import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { Point } from '@/managed-groups/entities/point.entity'
 import { User } from '@/users/entities/user.entity'
 import { UsersService } from '@/users/users.service'
+import { DEFAULT_IMAGE_URL } from '@/utils/constants/commons.const'
 import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
 import { BadRequestException, ConflictException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
@@ -136,6 +137,7 @@ export class ManagedGroupsService {
   async createGroup(createGroupDto: CreateGroupDto, queryRunner: QueryRunner): Promise<Group> {
     const group = await this.groupsRepository.create({
       ...createGroupDto,
+      avatar_url: createGroupDto.avatar_url || DEFAULT_IMAGE_URL,
       user: { id: createGroupDto.userId },
     })
     return await queryRunner.manager.save(group)
