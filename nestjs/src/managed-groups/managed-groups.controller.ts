@@ -1,3 +1,4 @@
+import { CreateGiftsDto } from '@/managed-groups/dto/create-gifts.dto'
 import { CreateGroupDto } from '@/managed-groups/dto/create-group.dto'
 import { CreateGroupUserDto } from '@/managed-groups/dto/create-group_user.dto'
 import { CreatePointDto } from '@/managed-groups/dto/create-point.dto'
@@ -5,6 +6,7 @@ import { UpdateGroupDto } from '@/managed-groups/dto/update-group.dto'
 import { Group } from '@/managed-groups/entities/group.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { AdminModeratorGuard } from '@/managed-groups/guards/admin_moderator.guard'
+import { ManagedGroupsGiftsService } from '@/managed-groups/managed-groups.gifts.service'
 import { ManagedGroupsService } from '@/managed-groups/managed-groups.service'
 import { responseError } from '@/utils/helpers/response_error.helper'
 import { Body, Controller, Get, HttpStatus, Param, ParseIntPipe, Post, Put, Req, Res, UseGuards } from '@nestjs/common'
@@ -13,7 +15,10 @@ import { UpdateResult } from 'typeorm'
 
 @Controller('managed-groups')
 export class ManagedGroupsController {
-  constructor(private readonly managedGroupsService: ManagedGroupsService) {}
+  constructor(
+    private readonly managedGroupsService: ManagedGroupsService,
+    private readonly managedGroupsGiftsService: ManagedGroupsGiftsService,
+  ) {}
 
   @Post()
   async create(@Body() createGroupDto: CreateGroupDto, @Res() res: Response): Promise<Response> {
@@ -140,8 +145,22 @@ export class ManagedGroupsController {
   async getGroupById(@Res() res: Response, @Param('groupId', ParseIntPipe) groupId: number): Promise<Response> {
     try {
       const result = await this.managedGroupsService.getGroupById(groupId)
+      return res.status(HttpStatus.OK).json(result)
+    } catch (error) {
+      return responseError(res, error)
+    }
+  }
 
-      return res.status(HttpStatus.OK).json(result) 
+  @UseGuards(AdminModeratorGuard)
+  @Post(':groupId/gifts')
+  async addGiftToGroup(
+    @Res() res: Response,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Body() createGiftsDto: CreateGiftsDto,
+  ): Promise<Response> {
+    try {
+      const result = await this.managedGroupsGiftsService.addGiftToGroup(groupId, createGiftsDto)
+      return res.status(HttpStatus.OK).json(result)
     } catch (error) {
       return responseError(res, error)
     }

@@ -11,3 +11,5 @@ export const responseError = (res: Response, error: any) => {
   }
   return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(DEFAULT_ERROR_RESPONSE)
 }
+
+export const errorInternalServer = new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
