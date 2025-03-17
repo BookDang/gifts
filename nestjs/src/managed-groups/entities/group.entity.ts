@@ -1,3 +1,4 @@
+import { GroupGift } from '@/managed-groups/entities/group_gift.entity'
 import { GroupUser } from '@/managed-groups/entities/group_user.entity'
 import { User } from '@/users/entities/user.entity'
 import {
@@ -43,6 +44,9 @@ export class Group {
 
   @OneToMany(() => GroupUser, (groupUser) => groupUser.group, { onDelete: 'CASCADE' })
   groupUsers: GroupUser[]
+
+  @OneToMany(() => GroupGift, (groupGift) => groupGift.group, { onDelete: 'CASCADE' })
+  groupGifts: GroupGift[]
 
   @CreateDateColumn()
   created_at: Date

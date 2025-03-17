@@ -1,7 +1,9 @@
 export const ER_DUP_ENTRY = 'ER_DUP_ENTRY'
+export const MYSQL_VARCHAR_INDEX_LIMIT = 191
 
 const MYSQL_CONST = {
   ER_DUP_ENTRY,
+  MYSQL_VARCHAR_INDEX_LIMIT
 }
 
 export default MYSQL_CONST

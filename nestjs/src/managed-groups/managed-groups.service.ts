@@ -8,12 +8,11 @@ import { User } from '@/users/entities/user.entity'
 import { UsersService } from '@/users/users.service'
 import { DEFAULT_IMAGE_URL } from '@/utils/constants/commons.const'
 import { USER_ROLES_ENUM, USER_STATUSES_ENUM } from '@/utils/enums/user.enum'
-import { BadRequestException, ConflictException, HttpStatus, Injectable } from '@nestjs/common'
+import { errorInternalServer } from '@/utils/helpers/response_error.helper'
+import { BadRequestException, ConflictException, Injectable } from '@nestjs/common'
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm'
 import * as moment from 'moment'
 import { DataSource, MoreThanOrEqual, QueryRunner, Repository, UpdateResult } from 'typeorm'
-
-const errorInternalServer = new Error(HttpStatus.INTERNAL_SERVER_ERROR.toString())
 
 @Injectable()
 export class ManagedGroupsService {
@@ -166,8 +165,7 @@ export class ManagedGroupsService {
         where: { user: { id: userId }, deleted_at: null },
         relations: ['groupUsers.points'],
       })
-    }
-    catch (error) {
+    } catch (error) {
       return errorInternalServer
     }
   }
