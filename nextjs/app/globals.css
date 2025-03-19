@@ -5,6 +5,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --color-orange-default: #E67E22;
+  --color-orange-light: #F39C12;
+  --color-orange-dark: #D35400;
+  --color-orange-soft: #E59866;
+  --color-orange-deep: #A04000;
 }
 
 @media (prefers-color-scheme: dark) {

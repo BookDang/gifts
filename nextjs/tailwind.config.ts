@@ -8,9 +8,19 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        "orange-sm": "0px 1px 3px var(--color-orange-light)",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        orange: {
+          DEFAULT: "var(--color-orange-default)",
+          light: "var(--color-orange-light)",
+          dark: "var(--color-orange-dark)",
+          soft: "var(--color-orange-soft)",
+          deep: "var(--color-orange-deep)",
+        },
       },
     },
   },
