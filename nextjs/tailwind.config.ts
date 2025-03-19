@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       boxShadow: {
-        "orange-sm": "0px 1px 3px var(--color-orange-light)",
+        "orange-sm": "0px 0px 3px var(--color-orange-light)",
       },
       colors: {
         background: "var(--background)",
