@@ -1,7 +1,7 @@
-import { DASHBOARD_LOGIN_PATH, DASHBOARD_PATH } from '@/utils/constants'
+import { DASHBOARD_PATH, LOGIN_PATH } from '@/utils/constants'
 import { NextRequest, NextResponse } from 'next/server'
 
-const EXCEPT_PATHS = [DASHBOARD_LOGIN_PATH]
+const EXCEPT_PATHS = [LOGIN_PATH]
 
 export function authMiddlewareDashboard(req: NextRequest) {
   const pathname = req.nextUrl.pathname
@@ -11,10 +11,10 @@ export function authMiddlewareDashboard(req: NextRequest) {
   }
 
   if (pathname.startsWith(DASHBOARD_PATH)) {
-    const token = req.cookies.get('token')?.value
+    const token = req.cookies.get('access-token')?.value
 
     if (!token) {
-      return NextResponse.redirect(new URL(DASHBOARD_LOGIN_PATH, req.url))
+      return NextResponse.redirect(new URL(LOGIN_PATH, req.url))
     }
   }
 

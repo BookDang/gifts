@@ -1,4 +1,5 @@
-import { DASHBOARD_LOGIN_PATH, DASHBOARD_PATH } from '@/utils/constants/path'
+import { ACCESS_TOKEN } from '@/utils/constants/auth'
+import { DASHBOARD_PATH, LOGIN_PATH } from '@/utils/constants/path'
 
-export { DASHBOARD_LOGIN_PATH, DASHBOARD_PATH }
+export { ACCESS_TOKEN, DASHBOARD_PATH, LOGIN_PATH }
 
